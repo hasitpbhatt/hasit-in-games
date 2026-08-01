@@ -11,7 +11,7 @@
     {
       "binding": "DB",
       "database_name": "hasit-in-games",
-      "database_id": "REPLACE_WITH_YOUR_DATABASE_ID",
+      "database_id": "c9337b7b-c8f9-4e79-a59c-403807207bdd",
       "migrations_dir": "migrations"
     }
   ],
