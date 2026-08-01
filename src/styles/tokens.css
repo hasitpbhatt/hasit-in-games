@@ -14,6 +14,12 @@
   --accent-1: #a78bfa;
   --accent-2: #818cf8;
   --accent-gradient: linear-gradient(135deg, #a78bfa 0%, #818cf8 50%, #60a5fa 100%);
+
+  --accent-wallet-1: #e0b87e;
+  --accent-wallet-2: #c78f4e;
+  --accent-wallet-3: #a06a33;
+  --accent-wallet: linear-gradient(135deg, #e0b87e 0%, #c78f4e 50%, #a06a33 100%);
+  --shadow-wallet-glow: 0 0 28px rgba(199, 143, 78, 0.25);
   --success: #34d399;
   --success-soft: rgba(52, 211, 153, 0.14);
   --danger: #f87171;

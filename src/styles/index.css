@@ -526,6 +526,10 @@ main {
   margin-bottom: 20px;
 }
 
+.game-view-toolbar .back-btn {
+  flex-shrink: 0;
+}
+
 .game-view-toolbar h2 {
   margin: 0;
   font-size: 20px;
@@ -1319,8 +1323,8 @@ main {
   gap: 16px;
   flex-wrap: wrap;
   padding: 18px;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
-  border: 1px solid var(--border);
+  background: linear-gradient(165deg, rgba(224, 184, 126, 0.07), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(224, 184, 126, 0.22);
   border-radius: var(--r-lg);
 }
 
@@ -1329,7 +1333,7 @@ main {
   font-weight: 700;
   font-size: 32px;
   line-height: 1.1;
-  background: var(--accent-gradient);
+  background: var(--accent-wallet);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1391,8 +1395,8 @@ main {
 }
 
 .wallet-pill:hover {
-  border-color: var(--accent-2);
-  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12);
+  border-color: var(--accent-wallet-2);
+  box-shadow: 0 0 0 3px rgba(199, 143, 78, 0.12);
 }
 
 .wallet-pill .wallet-icon {

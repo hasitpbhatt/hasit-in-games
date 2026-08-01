@@ -5,6 +5,8 @@ import { useScoreSubmit } from '../../lib/useScoreSubmit'
 
 const GRID = 20
 const BASE_TICK = 160
+const CELL = 24
+const LOGICAL = GRID * CELL
 
 type Point = { x: number; y: number }
 type Direction = 'up' | 'down' | 'left' | 'right'
@@ -48,8 +50,8 @@ export default function Snake() {
     if (!canvas || !game) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    const size = canvas.width / GRID
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    const size = LOGICAL / GRID
+    ctx.clearRect(0, 0, LOGICAL, LOGICAL)
 
     ctx.fillStyle = 'rgba(129, 140, 248, 0.18)'
     ctx.fillRect(game.food.x * size + size * 0.2, game.food.y * size + size * 0.2, size * 0.6, size * 0.6)
@@ -65,6 +67,18 @@ export default function Snake() {
       ctx.fill()
     })
   }, [])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = LOGICAL * dpr
+    canvas.height = LOGICAL * dpr
+    ctx.scale(dpr, dpr)
+    draw()
+  }, [draw])
 
   const start = useCallback(() => {
     const head: Point = { x: 10, y: 10 }
@@ -191,8 +205,8 @@ export default function Snake() {
       <canvas
         ref={canvasRef}
         className="snake-canvas"
-        width={GRID * 24}
-        height={GRID * 24}
+        width={LOGICAL}
+        height={LOGICAL}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         aria-label="Snake game board"

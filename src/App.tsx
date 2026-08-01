@@ -16,6 +16,25 @@ function App() {
     refresh()
   }, [refresh])
 
+  useEffect(() => {
+    const onPop = () => setActiveGame(null)
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
+  const openGame = (id: GameId) => {
+    setActiveGame(id)
+    window.history.pushState({ game: id }, '')
+  }
+
+  const closeGame = () => {
+    if (window.history.state && typeof window.history.state.game === 'string') {
+      window.history.back()
+    } else {
+      setActiveGame(null)
+    }
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -66,7 +85,7 @@ function App() {
         <main>
           <div className="container">
             {activeGame ? (
-              <GameView game={activeGame} onBack={() => setActiveGame(null)} />
+              <GameView game={activeGame} onBack={closeGame} />
             ) : (
               <>
                 <section className="hero">
@@ -82,7 +101,7 @@ function App() {
                 <p className="section-label">Game vault</p>
                 <section className="games-grid" aria-label="Available games">
                   {GAMES.map((g, i) => (
-                    <GameCard key={g.id} game={g} index={i} onPlay={setActiveGame} />
+                    <GameCard key={g.id} game={g} index={i} onPlay={openGame} />
                   ))}
                 </section>
               </>

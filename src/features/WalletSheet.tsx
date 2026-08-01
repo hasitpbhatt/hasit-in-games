@@ -53,7 +53,7 @@ export function WalletSheet() {
         <div>
           <div className="wallet-pts">{user.balance.toLocaleString()}</div>
           <div className="pts-label">
-            points · ≈ {trx} TRX ready to withdraw
+            points · {trx} TRX ready to withdraw
           </div>
         </div>
         <div className="wallet-progress-block">

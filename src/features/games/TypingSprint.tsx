@@ -16,25 +16,12 @@ const EASY_WORDS = [
   'pot', 'rag', 'rim', 'rod', 'rug', 'tub', 'wax', 'web', 'zip', 'ace',
   'act', 'add', 'age', 'air', 'ask', 'bad', 'bag', 'bar', 'bat', 'bay',
   'bed', 'bee', 'bet', 'bid', 'big', 'bin', 'bit', 'bow', 'bud', 'bug',
-  'bun', 'bus', 'cab', 'cam', 'cap', 'cob', 'cod', 'cog', 'con', 'cop',
-  'cot', 'cow', 'cub', 'cut', 'dad', 'den', 'dew', 'dig', 'dim', 'dip',
-  'doe', 'dot', 'dry', 'dug', 'dye', 'eat', 'eel', 'elf', 'elk', 'elm',
-  'end', 'era', 'eve', 'fan', 'far', 'fat', 'fax', 'fee', 'few', 'fig',
-  'fin', 'fir', 'fit', 'fix', 'fly', 'fog', 'fox', 'fry', 'fur', 'gap',
-  'gas', 'gem', 'gin', 'gum', 'gun', 'gut', 'gym', 'ham', 'hat', 'hay',
-  'hen', 'hid', 'hip', 'hit', 'hoe', 'hog', 'hop', 'hot', 'hue', 'hug',
-  'hum', 'hut', 'ill', 'ink', 'inn', 'jam', 'jar', 'jaw', 'jay', 'jet',
-  'jig', 'joy', 'jug', 'jut', 'kid', 'kit', 'lab', 'lad', 'lag', 'lap',
-  'law', 'lay', 'lid', 'lie', 'lip', 'lit', 'log', 'lot', 'low', 'mad',
-  'mat', 'may', 'men', 'met', 'mid', 'mix', 'mob', 'mop', 'mud', 'mug',
-  'nap', 'nod', 'nut', 'oak', 'oat', 'odd', 'ore', 'owe', 'pad', 'pal',
-  'pan', 'pat', 'paw', 'pea', 'pet', 'pig', 'pod', 'pop', 'raw', 'ray',
-  'rib', 'rid', 'rip', 'rot', 'row', 'rub', 'sad', 'sag', 'sap', 'sat',
-  'saw', 'sew', 'shy', 'sin', 'sip', 'sir', 'six', 'ski', 'sob', 'sod',
-  'son', 'sow', 'soy', 'spy', 'sum', 'tab', 'tag', 'tan', 'tap', 'tea',
-  'ten', 'tie', 'tin', 'tip', 'toe', 'ton', 'top', 'tot', 'tow', 'toy',
-  'try', 'tug', 'urn', 'van', 'vet', 'via', 'vow', 'wig', 'win', 'wit',
-  'wok', 'wow', 'yet', 'zoo', 'game', 'play', 'earn', 'sing', 'lazy',
+  'bun', 'bus', 'cab', 'cap', 'cow', 'cub', 'cut', 'dad', 'den', 'dig',
+  'dim', 'dip', 'dot', 'dry', 'eat', 'end', 'fan', 'far', 'fat', 'fee',
+  'few', 'fig', 'fin', 'fit', 'fix', 'fly', 'fog', 'fox', 'fry', 'fur',
+  'gas', 'gem', 'gum', 'gun', 'gym', 'ham', 'hat', 'hay', 'hen', 'hid',
+  'hip', 'hit', 'hop', 'hot', 'hug', 'hut', 'jam', 'jar', 'jaw', 'jet',
+  'joy', 'kid', 'kit', 'lab', 'lad', 'lap', 'law', 'lay', 'lid', 'log',
 ]
 
 const MEDIUM_WORDS = [
@@ -43,25 +30,20 @@ const MEDIUM_WORDS = [
   'flare', 'glide', 'surge', 'blaze', 'orbit', 'vector', 'vault', 'water',
   'house', 'music', 'light', 'table', 'chair', 'phone', 'cloud', 'storm',
   'river', 'green', 'white', 'black', 'small', 'large', 'world', 'heart',
-  'dream', 'smile', 'laugh', 'dance', 'sing', 'climb', 'floor', 'stone',
-  'grass', 'earth', 'space', 'magic', 'power', 'flame', 'shine', 'clear',
-  'bring', 'catch', 'drive', 'early', 'every', 'field', 'final', 'first',
-  'found', 'frame', 'fresh', 'great', 'group', 'guess', 'happy', 'heavy',
-  'human', 'image', 'issue', 'judge', 'later', 'leave', 'major', 'might',
-  'money', 'month', 'mouth', 'never', 'night', 'north', 'offer', 'often',
-  'other', 'paint', 'paper', 'party', 'peace', 'piece', 'place', 'plain',
-  'plant', 'plate', 'press', 'print', 'proud', 'prove', 'quiet', 'quite',
-  'radio', 'raise', 'reach', 'right', 'round', 'scene', 'sense', 'serve',
-  'seven', 'share', 'short', 'sight', 'since', 'sleep', 'sound', 'south',
-  'speak', 'spell', 'spend', 'sport', 'staff', 'stage', 'stand', 'state',
-  'steam', 'steel', 'store', 'story', 'study', 'sweet', 'taste', 'teach',
-  'theme', 'think', 'third', 'those', 'three', 'throw', 'tight', 'today',
-  'total', 'touch', 'tough', 'trade', 'trail', 'train', 'treat', 'trial',
-  'trick', 'trust', 'truth', 'under', 'until', 'upper', 'value', 'video',
-  'voice', 'watch', 'wheel', 'where', 'which', 'while', 'whole', 'whose',
-  'woman', 'worry', 'would', 'write', 'wrong', 'young', 'youth', 'prize',
-  'enemy', 'rocket', 'laser', 'quest', 'medal', 'trophy', 'boost', 'armor',
-  'board', 'chess', 'arrow', 'match', 'robot', 'ninja', 'cyber', 'pilot',
+  'dream', 'smile', 'laugh', 'dance', 'climb', 'floor', 'stone', 'grass',
+  'earth', 'space', 'magic', 'power', 'flame', 'shine', 'clear', 'bring',
+  'catch', 'drive', 'early', 'every', 'field', 'final', 'first', 'found',
+  'frame', 'fresh', 'great', 'group', 'guess', 'happy', 'heavy', 'human',
+  'image', 'issue', 'judge', 'later', 'leave', 'major', 'might', 'money',
+  'month', 'mouth', 'never', 'night', 'north', 'offer', 'often', 'other',
+  'paint', 'paper', 'party', 'peace', 'piece', 'place', 'plain', 'plant',
+  'plate', 'press', 'print', 'proud', 'prove', 'quiet', 'quite', 'radio',
+  'raise', 'reach', 'right', 'round', 'scene', 'sense', 'serve', 'seven',
+  'share', 'short', 'sight', 'since', 'sleep', 'sound', 'south', 'speak',
+  'spell', 'spend', 'sport', 'staff', 'stage', 'stand', 'state', 'steam',
+  'steel', 'store', 'story', 'study', 'sweet', 'taste', 'teach', 'theme',
+  'think', 'third', 'those', 'three', 'throw', 'tight', 'today', 'total',
+  'touch', 'tough', 'trade', 'trail', 'train', 'treat',
 ]
 
 const HARD_WORDS = [
@@ -85,14 +67,6 @@ const HARD_WORDS = [
   'meaning', 'measure', 'mechanic', 'meeting', 'mention', 'message',
   'minimum', 'mystery', 'network', 'nowhere', 'observe', 'obvious',
   'officer', 'opinion', 'organic', 'outline', 'patient', 'perfect',
-  'perform', 'perhaps', 'plastic', 'precise', 'predict', 'prepare',
-  'present', 'preview', 'primary', 'private', 'produce', 'project',
-  'promise', 'protect', 'publish', 'purpose', 'pursuit', 'rebuild',
-  'refresh', 'regular', 'replace', 'respond', 'restore', 'satisfy',
-  'scholar', 'scratch', 'section', 'serious', 'session', 'shelter',
-  'shoulder', 'similar', 'sincere', 'society', 'soldier', 'someone',
-  'spectrum', 'squeeze', 'stranger', 'student', 'subject', 'succeed',
-  'support', 'suppose', 'surprise', 'surround', 'symptom', 'strength',
 ]
 
 export default function TypingSprint() {
@@ -240,17 +214,20 @@ export default function TypingSprint() {
   )
 }
 
-function pick(list: string[]): string {
-  return list[Math.floor(Math.random() * list.length)]
+function shuffle(list: string[]): string[] {
+  const copy = [...list]
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = copy[i]
+    copy[i] = copy[j]
+    copy[j] = temp
+  }
+  return copy
 }
 
 function generateRound(): string[] {
-  const words: string[] = []
-  for (let i = 0; i < 30; i++) {
-    const roll = Math.random()
-    if (roll < 0.4) words.push(pick(EASY_WORDS))
-    else if (roll < 0.8) words.push(pick(MEDIUM_WORDS))
-    else words.push(pick(HARD_WORDS))
-  }
-  return words
+  const easy = shuffle(EASY_WORDS).slice(0, 12)
+  const medium = shuffle(MEDIUM_WORDS).slice(0, 12)
+  const hard = shuffle(HARD_WORDS).slice(0, 6)
+  return shuffle([...easy, ...medium, ...hard])
 }

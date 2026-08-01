@@ -24,8 +24,8 @@ export function GameView({ game, onBack }: { game: GameId; onBack: () => void })
   return (
     <div className="game-view">
       <div className="game-view-toolbar">
-        <button className="btn btn-soft" onClick={onBack}>
-          ← Back
+        <button className="btn btn-primary back-btn" onClick={onBack}>
+          <span aria-hidden>←</span> Back to vault
         </button>
         <h2>
           {def?.icon} {def?.name}
