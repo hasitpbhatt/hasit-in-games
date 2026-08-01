@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { api, ApiError } from '../../lib/api'
+import { ScoreBanner } from './ScoreBanner'
+import { GameHud } from '../../components/GameHud'
+import { useScoreSubmit } from '../../lib/useScoreSubmit'
 
 const SIZE = 4
 const STORAGE_KEY = 'hasit-games-2048-best'
 
 type Grid = number[][]
+type Dir = 'left' | 'right' | 'up' | 'down'
 
 function emptyGrid(): Grid {
   return Array.from({ length: SIZE }, () => Array(SIZE).fill(0))
@@ -28,7 +31,6 @@ function addRandomTile(g: Grid): Grid {
   return grid
 }
 
-// Returns { grid, gained, moved } — compress + merge for a direction.
 function moveLeft(grid: Grid): { grid: Grid; gained: number; moved: boolean } {
   let gained = 0
   let moved = false
@@ -64,25 +66,17 @@ function rotate(g: Grid): Grid {
   return out
 }
 
-function move(grid: Grid, dir: 'left' | 'right' | 'up' | 'down') {
+function move(grid: Grid, dir: Dir) {
   let g = clone(grid)
-  let gained = 0
-  let moved = false
   let turns = 0
-  if (dir === 'right') {
-    turns = 2
-  } else if (dir === 'up') {
-    turns = 3
-  } else if (dir === 'down') {
-    turns = 1
-  }
+  if (dir === 'right') turns = 2
+  else if (dir === 'up') turns = 3
+  else if (dir === 'down') turns = 1
   for (let i = 0; i < turns; i++) g = rotate(g)
   const res = moveLeft(g)
-  gained = res.gained
-  moved = res.moved
   g = res.grid
   for (let i = 0; i < (4 - turns) % 4; i++) g = rotate(g)
-  return { grid: g, gained, moved }
+  return { grid: g, gained: res.gained, moved: res.moved }
 }
 
 function canMove(g: Grid): boolean {
@@ -102,37 +96,51 @@ export default function Game2048() {
   const [score, setScore] = useState(0)
   const [best, setBest] = useState(() => Number(localStorage.getItem(STORAGE_KEY) ?? 0))
   const [over, setOver] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
-  const playStartRef = useRef(Date.now())
+  const [bumps, setBumps] = useState<boolean[]>([])
+  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('2048')
+  const prevGridRef = useRef<Grid>(grid)
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
 
-  const submit = useCallback(async (finalScore: number) => {
-    if (submitting) return
-    setSubmitting(true)
-    setResult(null)
-    const playSeconds = Math.round((Date.now() - playStartRef.current) / 1000)
-    try {
-      const res = await api.submitScore('2048', finalScore, playSeconds)
-      setResult(res.points > 0 ? `+${res.points} points earned!` : res.capped ? 'No points this round (daily cap reached)' : 'Playtime too short to earn points')
-    } catch (err) {
-      setResult(err instanceof ApiError ? err.message : 'Failed to submit score')
-    } finally {
-      setSubmitting(false)
+  const updateBest = (value: number) => {
+    if (value > Number(localStorage.getItem(STORAGE_KEY) ?? 0)) {
+      localStorage.setItem(STORAGE_KEY, String(value))
+      setBest(value)
     }
-  }, [submitting])
+  }
+
+  const handleMove = useCallback(
+    (dir: Dir) => {
+      if (over) return
+      const res = move(grid, dir)
+      if (!res.moved) return
+      const next = addRandomTile(res.grid)
+      prevGridRef.current = grid
+      setGrid(next)
+      const flat = next.flat()
+      setBumps(flat.map((v, i) => v > 0 && v !== prevGridRef.current.flat()[i]))
+      const newScore = score + res.gained
+      setScore(newScore)
+      updateBest(newScore)
+      if (!canMove(next)) {
+        setOver(true)
+        submit(newScore)
+      }
+    },
+    [grid, over, score, submit],
+  )
 
   const start = () => {
-    playStartRef.current = Date.now()
+    prevGridRef.current = emptyGrid()
     setGrid(addRandomTile(addRandomTile(emptyGrid())))
     setScore(0)
     setOver(false)
-    setResult(null)
+    setBumps([])
+    resetTimer()
   }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (over) return
-      const dirMap: Record<string, 'left' | 'right' | 'up' | 'down'> = {
+      const dirMap: Record<string, Dir> = {
         ArrowLeft: 'left',
         ArrowRight: 'right',
         ArrowUp: 'up',
@@ -141,43 +149,77 @@ export default function Game2048() {
       const dir = dirMap[e.key]
       if (!dir) return
       e.preventDefault()
-      const res = move(grid, dir)
-      if (!res.moved) return
-      const next = addRandomTile(res.grid)
-      setGrid(next)
-      setScore((s) => s + res.gained)
-      if (!canMove(next)) {
-        setOver(true)
-        if (score + res.gained > best) {
-          localStorage.setItem(STORAGE_KEY, String(score + res.gained))
-          setBest(score + res.gained)
-        }
-        submit(score + res.gained)
-      }
+      handleMove(dir)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [grid, over, score, best, submit])
+  }, [handleMove])
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0]
+    touchStart.current = { x: t.clientX, y: t.clientY }
+  }
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart.current) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - touchStart.current.x
+    const dy = t.clientY - touchStart.current.y
+    if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return
+    if (Math.abs(dx) > Math.abs(dy)) handleMove(dx > 0 ? 'right' : 'left')
+    else handleMove(dy > 0 ? 'down' : 'up')
+    touchStart.current = null
+  }
 
   return (
-    <div className="game-2048">
-      <div className="game-hud">
-        <span>Score: {score.toLocaleString()}</span>
-        <span>Best: {best.toLocaleString()}</span>
-        <button className="btn btn-ghost" onClick={start}>New game</button>
-      </div>
-      <div className="tiles" aria-label="2048 board">
+    <div
+      className="game-2048"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      aria-label="2048 board — use arrow keys or swipe to play"
+    >
+      <GameHud
+        stats={[
+          { label: 'Score', value: score.toLocaleString() },
+          { label: 'Best', value: best.toLocaleString() },
+        ]}
+        action={
+          <button className="btn btn-ghost" onClick={start}>
+            New game
+          </button>
+        }
+      />
+
+      <div className="tiles">
         {grid.flatMap((row, r) =>
           row.map((v, c) => (
-            <div key={`${r}-${c}`} className={`tile tile-${Math.min(v, 2048)}`}>
+            <div
+              key={`${r}-${c}`}
+              className={`tile tile-${Math.min(v, 2048)}${bumps[r * SIZE + c] ? ' tile-bump' : ''}`}
+            >
               {v || ''}
             </div>
           )),
         )}
       </div>
-      {over && <div className="game-over">Game over</div>}
+
       {submitting && <p className="status">Submitting…</p>}
-      {result && <p className="status">{result}</p>}
+      <ScoreBanner feedback={feedback} />
+
+      {over && (
+        <div className="overlay" role="dialog" aria-modal="true" aria-label="Game over">
+          <div className="modal">
+            <h2>Game over</h2>
+            <div className="modal-score">{score.toLocaleString()}</div>
+            <p className="modal-sub">Best score: {best.toLocaleString()}</p>
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={start} autoFocus>
+                Play again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

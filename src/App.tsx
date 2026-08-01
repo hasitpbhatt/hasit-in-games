@@ -1,12 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from './store/auth'
-import { GAMES } from './lib/points'
-import Game2048 from './features/games/Game2048'
+import { GAMES, type GameId } from './lib/points'
+import { GameView } from './features/games/GameView'
+import { GameCard } from './features/games/GameCard'
 import { LoginForm } from './features/auth/LoginForm'
-import { PromoBox } from './features/auth/PromoBox'
+import { WalletSheet } from './features/WalletSheet'
+import { BottomSheet } from './components/BottomSheet'
 
 function App() {
   const { user, todayEarned, refresh, logout, loading } = useAuth()
+  const [activeGame, setActiveGame] = useState<GameId | null>(null)
+  const [walletOpen, setWalletOpen] = useState(false)
 
   useEffect(() => {
     refresh()
@@ -16,16 +20,32 @@ function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark">🎮</span>
-          <span className="brand-name">hasit.in/games</span>
+          <span className="brand-mark" aria-hidden>
+            🎮
+          </span>
+          <div className="brand-text">
+            <span className="brand-name">hasit.in/games</span>
+            <span className="brand-sub">play · earn · redeem</span>
+          </div>
         </div>
         {user && (
           <div className="userbar">
-            <span className="chip">👤 {user.username}</span>
-            <span className="chip chip-points">⭐ {user.balance.toLocaleString()} pts</span>
+            <span className="chip chip-user">👤 {user.username}</span>
             {todayEarned > 0 && (
-              <span className="chip chip-today">today +{todayEarned.toLocaleString()}</span>
+              <span className="chip chip-today">+{todayEarned.toLocaleString()} today</span>
             )}
+            <button
+              type="button"
+              className="wallet-pill"
+              onClick={() => setWalletOpen(true)}
+              aria-haspopup="dialog"
+              aria-label="Open wallet"
+            >
+              <span className="wallet-icon" aria-hidden>
+                ⭐
+              </span>
+              {user.balance.toLocaleString()}
+            </button>
             <button className="btn btn-ghost" onClick={() => logout()}>
               Logout
             </button>
@@ -34,47 +54,46 @@ function App() {
       </header>
 
       {loading ? (
-        <main className="loading">Loading…</main>
+        <main className="loading">
+          <div className="skeleton-ring" aria-hidden />
+          <span>Loading your arcade…</span>
+        </main>
       ) : !user ? (
         <main className="welcome">
           <LoginForm />
         </main>
       ) : (
-        <main className="portal">
-          <section className="hero">
-            <h1>Play. Earn points. Redeem for TRX.</h1>
-            <p className="sub">
-              Skill-based arcade games on hasit.in. Every play is validated server-side;
-              redeem your points on FaucetPay.
-            </p>
-          </section>
+        <main>
+          <div className="container">
+            {activeGame ? (
+              <GameView game={activeGame} onBack={() => setActiveGame(null)} />
+            ) : (
+              <>
+                <section className="hero">
+                  <h1>
+                    Play. Earn. <span className="gradient-text">Redeem.</span>
+                  </h1>
+                  <p className="sub">
+                    Skill-based arcade games on hasit.in. Every play is validated server-side;
+                    cash out your points for TRX on FaucetPay.
+                  </p>
+                </section>
 
-          <section className="games-grid">
-            {GAMES.map((g) => (
-              <GameCard key={g.id} id={g.id} name={g.name} description={g.description} icon={g.icon} />
-            ))}
-          </section>
-
-          <section className="promo-section">
-            <PromoBox />
-          </section>
-
-          <section className="game-area" id="game-2048">
-            <h2>2048</h2>
-            <Game2048 />
-          </section>
+                <p className="section-label">Game vault</p>
+                <section className="games-grid" aria-label="Available games">
+                  {GAMES.map((g, i) => (
+                    <GameCard key={g.id} game={g} index={i} onPlay={setActiveGame} />
+                  ))}
+                </section>
+              </>
+            )}
+          </div>
         </main>
       )}
-    </div>
-  )
-}
 
-function GameCard({ name, description, icon }: { id: string; name: string; description: string; icon: string }) {
-  return (
-    <div className="game-card">
-      <span className="game-icon">{icon}</span>
-      <h3>{name}</h3>
-      <p>{description}</p>
+      <BottomSheet open={walletOpen} onClose={() => setWalletOpen(false)} ariaLabel="Wallet">
+        <WalletSheet />
+      </BottomSheet>
     </div>
   )
 }
