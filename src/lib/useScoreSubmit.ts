@@ -5,6 +5,7 @@ import type { GameId } from './points'
 export interface ScoreFeedback {
   kind: 'ok' | 'err'
   text: string
+  points?: number
 }
 
 export function useScoreSubmit(game: GameId) {
@@ -26,7 +27,7 @@ export function useScoreSubmit(game: GameId) {
       try {
         const res = await api.submitScore(game, score, playSeconds)
         if (res.points > 0) {
-          setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned` })
+          setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points })
         } else if (res.capped) {
           setFeedback({ kind: 'ok', text: 'Daily cap reached — no points this round' })
         } else {
