@@ -1,0 +1,19 @@
+// Cloudflare Pages config for hasit-in-games.
+// Usage:
+//   npx wrangler d1 create hasit-in-games        # once, record database_id
+//   npx wrangler d1 execute hasit-in-games --local --file schema.sql
+//   npx wrangler pages dev dist                   # local full-stack dev (port 8788)
+
+{
+  "name": "hasit-in-games",
+  "pages_build_output_dir": "dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hasit-in-games",
+      "database_id": "REPLACE_WITH_YOUR_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {}
+}
