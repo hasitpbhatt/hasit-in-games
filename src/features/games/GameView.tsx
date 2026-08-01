@@ -6,6 +6,9 @@ import WhackAMole from './WhackAMole'
 import ReactionTime from './ReactionTime'
 import Snake from './Snake'
 import TypingSprint from './TypingSprint'
+import Queens from './Queens'
+import Tango from './Tango'
+import Pinpoint from './Pinpoint'
 
 type GameComponent = () => React.JSX.Element
 
@@ -16,6 +19,9 @@ const GAME_COMPONENTS: Record<GameId, GameComponent> = {
   reaction: ReactionTime,
   snake: Snake,
   typing: TypingSprint,
+  queens: Queens,
+  tango: Tango,
+  pinpoint: Pinpoint,
 }
 
 export function GameView({ game, onBack }: { game: GameId; onBack: () => void }) {

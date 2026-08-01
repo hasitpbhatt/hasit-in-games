@@ -1162,6 +1162,211 @@ main {
   opacity: 0.5;
 }
 
+/* ---------- Queens ---------- */
+
+.queens-wrap {
+  touch-action: auto;
+}
+
+.queens-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.queens-cell {
+  border: 0;
+  padding: 0;
+  aspect-ratio: 1;
+  font-size: clamp(18px, 6vw, 30px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: filter var(--dur-fast) ease, transform var(--dur-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.queens-cell:hover {
+  filter: brightness(1.15);
+}
+
+.queens-cell:active {
+  transform: scale(0.92);
+}
+
+.queens-cell.conflict {
+  position: relative;
+}
+
+.queens-cell.conflict::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 3px var(--danger);
+}
+
+.queens-hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.queens-hint.warn {
+  color: var(--warning);
+}
+
+/* ---------- Tango ---------- */
+
+.tango-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  aspect-ratio: 1;
+  user-select: none;
+}
+
+.tango-cell {
+  border: 0;
+  padding: 0;
+  aspect-ratio: 1;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--dur-fast) ease, transform var(--dur-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tango-cell:nth-child(6n) {
+  border-right: none;
+}
+
+.tango-grid .tango-cell:nth-child(n + 31) {
+  border-bottom: none;
+}
+
+.tango-cell.sun {
+  background: rgba(251, 191, 36, 0.14);
+}
+
+.tango-cell.moon {
+  background: rgba(129, 140, 248, 0.16);
+}
+
+.tango-cell.given {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.tango-cell:not(.given):hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tango-cell:disabled {
+  cursor: default;
+}
+
+.tango-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+}
+
+/* ---------- Pinpoint ---------- */
+
+.pinpoint-clues {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pinpoint-label {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.pinpoint-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-word {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  animation: chip-in var(--dur) var(--ease-out) both;
+}
+
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pinpoint-guess {
+  display: flex;
+  gap: 8px;
+}
+
+.pinpoint-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-size: 15px;
+  transition: border-color var(--dur) ease, box-shadow var(--dur) ease;
+}
+
+.pinpoint-input:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18);
+}
+
+.pinpoint-input::placeholder {
+  color: var(--text-dim);
+}
+
 /* ---------- Overlay / modal ---------- */
 
 .overlay {

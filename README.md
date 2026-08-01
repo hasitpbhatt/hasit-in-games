@@ -199,6 +199,9 @@ The server rejects scores with:
 | Reaction Time | `score < 500 ? floor((500 - score) / 3) : 0` | 150 |
 | Snake | `score * 4` | 400 |
 | Typing Sprint | `floor(score / 2)` | 300 |
+| Queens | `solve_seconds > 0 ? max(20, min(200, 200 - seconds * 2)) : 0` | 200 |
+| Tango | `solve_seconds > 0 ? max(15, min(150, 180 - seconds)) : 0` | 150 |
+| Pinpoint | `correct_categories * 30` | 150 |
 
 The formula lives in `functions/_shared/economy.ts` (authoritative) and is
 mirrored client-side in `src/lib/points.ts` for UI feedback. The server value

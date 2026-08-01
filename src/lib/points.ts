@@ -14,7 +14,17 @@ export const DAILY_USER_CAP = 2_000
 // Minimum play time (seconds) before a score is accepted — anti-automation.
 export const MIN_PLAY_SECONDS = 5
 
-export const GAME_IDS = ['2048', 'memory', 'whack', 'reaction', 'snake', 'typing'] as const
+export const GAME_IDS = [
+  '2048',
+  'memory',
+  'whack',
+  'reaction',
+  'snake',
+  'typing',
+  'queens',
+  'tango',
+  'pinpoint',
+] as const
 export type GameId = (typeof GAME_IDS)[number]
 
 export interface GameDef {
@@ -68,6 +78,27 @@ export const GAMES: GameDef[] = [
     icon: '⌨️',
     maxPointsPerPlay: 300,
   },
+  {
+    id: 'queens',
+    name: 'Queens',
+    description: 'One queen per row, column & color — no two may touch.',
+    icon: '👑',
+    maxPointsPerPlay: 200,
+  },
+  {
+    id: 'tango',
+    name: 'Tango',
+    description: 'Balance suns & moons — no three in a row.',
+    icon: '☀️',
+    maxPointsPerPlay: 150,
+  },
+  {
+    id: 'pinpoint',
+    name: 'Pinpoint',
+    description: 'Guess the category from the fewest clues.',
+    icon: '🎯',
+    maxPointsPerPlay: 150,
+  },
 ]
 
 // Client-side mirror of the server scoring formula.
@@ -93,6 +124,15 @@ export function pointsForScore(game: GameId, score: number): number {
       break
     case 'typing':
       points = Math.floor(score / 2)
+      break
+    case 'queens':
+      points = score > 0 ? Math.max(20, Math.min(200, 200 - score * 2)) : 0
+      break
+    case 'tango':
+      points = score > 0 ? Math.max(15, Math.min(150, 180 - score)) : 0
+      break
+    case 'pinpoint':
+      points = score * 30
       break
     default:
       points = 0

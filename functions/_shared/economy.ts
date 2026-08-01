@@ -17,6 +17,9 @@ const GAME_LIMITS: Record<string, number> = {
   reaction: 150,
   snake: 400,
   typing: 300,
+  queens: 200,
+  tango: 150,
+  pinpoint: 150,
 }
 
 export function isKnownGame(game: string): boolean {
@@ -48,6 +51,15 @@ export function pointsForScore(game: string, score: number): number {
       break
     case 'typing':
       points = Math.floor(score / 2)
+      break
+    case 'queens':
+      points = score > 0 ? Math.max(20, Math.min(200, 200 - score * 2)) : 0
+      break
+    case 'tango':
+      points = score > 0 ? Math.max(15, Math.min(150, 180 - score)) : 0
+      break
+    case 'pinpoint':
+      points = score * 30
       break
     default:
       points = 0
