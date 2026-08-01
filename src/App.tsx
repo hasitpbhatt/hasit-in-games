@@ -3,6 +3,7 @@ import { useAuth } from './store/auth'
 import { GAMES } from './lib/points'
 import Game2048 from './features/games/Game2048'
 import { LoginForm } from './features/auth/LoginForm'
+import { PromoBox } from './features/auth/PromoBox'
 
 function App() {
   const { user, todayEarned, refresh, logout, loading } = useAuth()
@@ -52,6 +53,10 @@ function App() {
             {GAMES.map((g) => (
               <GameCard key={g.id} id={g.id} name={g.name} description={g.description} icon={g.icon} />
             ))}
+          </section>
+
+          <section className="promo-section">
+            <PromoBox />
           </section>
 
           <section className="game-area" id="game-2048">

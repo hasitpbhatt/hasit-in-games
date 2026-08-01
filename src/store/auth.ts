@@ -12,6 +12,7 @@ interface AuthState {
   logout: () => Promise<void>
   refresh: () => Promise<void>
   loadPayouts: () => Promise<void>
+  applyPromoCode: (code: string) => Promise<number>
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -47,5 +48,11 @@ export const useAuth = create<AuthState>((set) => ({
   loadPayouts: async () => {
     const data = await api.payouts()
     set({ payouts: data.payouts })
+  },
+
+  applyPromoCode: async (code) => {
+    const data = await api.redeemCode(code)
+    set((state) => ({ user: state.user ? { ...state.user, balance: data.balance } : null }))
+    return data.points
   },
 }))

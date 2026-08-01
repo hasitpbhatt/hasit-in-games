@@ -45,3 +45,22 @@ CREATE TABLE IF NOT EXISTS payouts (
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_payouts_user ON payouts(user_id);
+
+CREATE TABLE IF NOT EXISTS promo_codes (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  code       TEXT NOT NULL UNIQUE,
+  points     INTEGER NOT NULL,
+  max_uses   INTEGER NOT NULL DEFAULT 1,
+  used_count INTEGER NOT NULL DEFAULT 0,
+  active     INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS code_redemptions (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  code       TEXT NOT NULL,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (code, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_code_redemptions_user ON code_redemptions(user_id);

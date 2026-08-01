@@ -61,6 +61,13 @@ export const api = {
     })
   },
 
+  redeemCode(code: string) {
+    return request<{ points: number; balance: number }>('/api/redeem-code', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    })
+  },
+
   payouts() {
     return request<{ payouts: Payout[] }>('/api/payouts')
   },

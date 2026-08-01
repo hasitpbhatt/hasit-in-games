@@ -62,6 +62,8 @@ with `checkaddress` before paying out. Amount is in the coin's smallest unit.
 | `/api/me` | GET | Current user + balance + daily earned |
 | `/api/score` | POST | Submit validated game result, credit points |
 | `/api/redeem` | POST | Check username, verify balance, trigger FaucetPay send |
+| `/api/redeem-code` | POST | Redeem a promo code → points added to balance |
+| `/api/admin/codes` | POST/GET | Create / list promo codes (requires `x-admin-secret` = `ADMIN_SECRET`) |
 | `/api/payouts` | GET | List own payout history |
 | `/api/leaderboard` | GET | Optional, no real names |
 
@@ -69,11 +71,13 @@ with `checkaddress` before paying out. Amount is in the coin's smallest unit.
 
 ## D1 schema (`schema.sql`)
 
-- `users` — id, username, password_hash, faucetpay_username, balance, created_at
+- `users` — id, username, password_hash, salt, faucetpay_username, balance, created_at
 - `sessions` — token, user_id, expires_at
 - `score_events` — id, user_id, game, score, points, created_at
 - `daily_budget` — date, points_issued (global daily pot rollup)
 - `payouts` — id, user_id, trx_amount, points_cost, payout_id, status, created_at
+- `promo_codes` — id, code, points, max_uses, used_count, active, created_at
+- `code_redemptions` — id, code, user_id, created_at (UNIQUE per code+user)
 
 ---
 
