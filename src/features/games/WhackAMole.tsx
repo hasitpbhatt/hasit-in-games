@@ -89,7 +89,7 @@ export default function WhackAMole() {
   }
 
   return (
-    <div className="game-2048">
+    <div className="game-stage">
       <GameHud
         stats={[{ label: 'Whacked', value: score }]}
         timer={{ value: timeLeft, max: ROUND_SECONDS }}

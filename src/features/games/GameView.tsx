@@ -7,7 +7,9 @@ import ReactionTime from './ReactionTime'
 import Snake from './Snake'
 import TypingSprint from './TypingSprint'
 
-const GAME_COMPONENTS: Record<GameId, () => React.JSX.Element> = {
+type GameComponent = () => React.JSX.Element
+
+const GAME_COMPONENTS: Record<GameId, GameComponent> = {
   '2048': Game2048,
   memory: MemoryMatch,
   whack: WhackAMole,

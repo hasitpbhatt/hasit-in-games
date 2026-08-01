@@ -28,7 +28,7 @@ export interface Payout {
   createdAt: string
 }
 
-export type GameId = '2048' | 'memory' | 'whack' | 'reaction' | 'snake' | 'typing'
+import type { GameId } from './points'
 
 export interface GameDefinition {
   id: GameId

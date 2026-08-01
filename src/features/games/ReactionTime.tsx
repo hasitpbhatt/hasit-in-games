@@ -89,7 +89,7 @@ export default function ReactionTime() {
   const label = phaseLabel()
 
   return (
-    <div className="game-2048">
+    <div className="game-stage">
       <GameHud
         stats={[{ label: 'Trial', value: `${Math.min(trial + (phase === 'done' ? 0 : 1), TRIALS)}/${TRIALS}` }]}
       />

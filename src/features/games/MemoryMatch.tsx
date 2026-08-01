@@ -86,7 +86,7 @@ export default function MemoryMatch() {
   }
 
   return (
-    <div className="game-2048">
+    <div className="game-stage">
       <GameHud
         stats={[
           { label: 'Matches', value: `${matches}/${PAIRS}` },

@@ -173,7 +173,7 @@ export default function Game2048() {
 
   return (
     <div
-      className="game-2048"
+      className="game-stage"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       aria-label="2048 board — use arrow keys or swipe to play"

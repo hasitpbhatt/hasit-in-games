@@ -794,9 +794,9 @@ main {
   background: rgba(248, 113, 113, 0.12);
 }
 
-/* ---------- 2048 ---------- */
+/* ---------- shared game stage ---------- */
 
-.game-2048 {
+.game-stage {
   display: flex;
   flex-direction: column;
   gap: 16px;
