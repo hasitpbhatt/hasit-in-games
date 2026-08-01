@@ -229,9 +229,19 @@ npx wrangler pages secret put ADMIN_SECRET
 ### 3. Deploy
 
 ```bash
-make deploy
-# or: npx wrangler deploy --x-commit-hash=$GITHUB_SHA
+npm run deploy
+# or: npx wrangler pages deploy dist
 ```
+
+> This is a **Cloudflare Pages** project (Vite SPA + `functions/` Pages
+> Functions + D1), not a standalone Worker. Use `wrangler pages deploy`, never
+> `wrangler deploy` (that targets Workers and needs a `main` script).
+>
+> **Dashboard (Git integration):** set Build command to `npm run build` and
+> Build output directory to `dist`. Pages auto-detects the `functions/`
+> directory; the D1 binding and secrets are configured under
+> **Project settings → Bindings**. The `wrangler.jsonc` `pages_build_output_dir`
+> is only used for CLI deploys and local dev.
 
 Cloudflare Pages builds from `dist/` (configured via `pages_build_output_dir` in
 `wrangler.jsonc`). The `wrangler.toml`-equivalent Pages config in `wrangler.jsonc`
@@ -282,13 +292,13 @@ binds the D1 database and makes secrets available as environment variables.
 
 | Command | Description |
 |---|---|
-| `make dev` | Start Vite + Wrangler Pages dev servers (concurrent) |
-| `make build` | `tsc -b && vite build` — production build to `dist/` |
-| `make preview` | Preview the production build locally |
-| `make lint` | Oxlint — check all files |
-| `make typecheck` | `tsc -b` (client) + `tsc -p tsconfig.functions.json` (functions) |
-| `make db-init` | Create local D1 DB + run `schema.sql` |
-| `make deploy` | Deploy to Cloudflare Pages |
+| `npm run dev` | Vite dev server (proxies `/api/*` to `wrangler pages dev` on `:8788`) |
+| `npm run build` | `tsc -b && vite build` — production build to `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Oxlint — check all files |
+| `npm run typecheck` | `tsc -b` (client) + `tsc -p tsconfig.functions.json` (functions) |
+| `npm run deploy` | `npm run build && npx wrangler pages deploy dist` |
+| `npx wrangler pages dev dist` | Full-stack local dev: static site + Functions + local D1 |
 
 ---
 
