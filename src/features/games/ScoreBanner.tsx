@@ -1,7 +1,12 @@
 import type { ScoreFeedback } from '../../lib/useScoreSubmit'
 import { ParticleBurst } from '../../components/ParticleBurst'
 
-export function ScoreBanner({ feedback }: { feedback: ScoreFeedback | null }) {
+interface ScoreBannerProps {
+  feedback: ScoreFeedback | null
+  onUndo?: () => void
+}
+
+export function ScoreBanner({ feedback, onUndo }: ScoreBannerProps) {
   if (!feedback) return null
   return (
     <>
@@ -13,6 +18,16 @@ export function ScoreBanner({ feedback }: { feedback: ScoreFeedback | null }) {
           <span aria-hidden>!</span>
         )}
         {feedback.text}
+        {feedback.undoable && onUndo && (
+          <button
+            type="button"
+            className="btn btn-soft"
+            style={{ marginLeft: 'auto', fontSize: 12, padding: '4px 10px' }}
+            onClick={onUndo}
+          >
+            Undo
+          </button>
+        )}
       </div>
     </>
   )

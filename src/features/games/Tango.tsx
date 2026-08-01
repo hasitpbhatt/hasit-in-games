@@ -133,7 +133,7 @@ export default function Tango() {
   const [over, setOver] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const startTimeRef = useRef(0)
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('tango')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('tango')
 
   const start = () => {
     const sol = generateSolution()
@@ -241,7 +241,7 @@ export default function Tango() {
         <p className="queens-hint warn">Check the rules — something isn't balanced yet.</p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
     </div>
   )
 }

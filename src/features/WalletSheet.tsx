@@ -24,6 +24,7 @@ export function WalletSheet() {
 
   const redeem = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!window.confirm(`Withdraw ${trx} TRX (${(trx * MIN_REDEMPTION_POINTS).toLocaleString()} pts)? This cannot be undone.`)) return
     setBusy(true)
     setMessage(null)
     try {

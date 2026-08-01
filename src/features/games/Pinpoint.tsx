@@ -61,7 +61,7 @@ export default function Pinpoint() {
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS)
   const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const submittedRef = useRef(false)
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('pinpoint')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('pinpoint')
 
   const start = () => {
     const q = shuffle(CATEGORIES)
@@ -187,7 +187,7 @@ export default function Pinpoint() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
     </div>
   )
 }

@@ -14,7 +14,7 @@ export default function ReactionTime() {
   const [trial, setTrial] = useState(0)
   const [results, setResults] = useState<number[]>([])
   const [average, setAverage] = useState(0)
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('reaction')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('reaction')
   const timerRef = useRef<number | null>(null)
   const startedAtRef = useRef(0)
 
@@ -115,7 +115,7 @@ export default function ReactionTime() {
       </button>
 
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
     </div>
   )
 }

@@ -42,7 +42,7 @@ export default function Snake() {
     dead: boolean
     ticks: number
   } | null>(null)
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('snake')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('snake')
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current
@@ -235,7 +235,7 @@ export default function Snake() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
     </div>
   )
 }

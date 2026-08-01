@@ -6,11 +6,13 @@ import { GameCard } from './features/games/GameCard'
 import { LoginForm } from './features/auth/LoginForm'
 import { WalletSheet } from './features/WalletSheet'
 import { BottomSheet } from './components/BottomSheet'
+import { HelpModal } from './components/HelpModal'
 
 function App() {
-  const { user, todayEarned, refresh, logout, loading } = useAuth()
+  const { user, todayEarned, todayCap, refresh, logout, loading } = useAuth()
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
   const [walletOpen, setWalletOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
 
   useEffect(() => {
     refresh()
@@ -53,6 +55,12 @@ function App() {
             {todayEarned > 0 && (
               <span className="chip chip-today">+{todayEarned.toLocaleString()} today</span>
             )}
+            {todayCap > 0 && (
+              <div className="cap-bar" aria-label={`Daily cap ${Math.round((todayEarned / todayCap) * 100)}% used`}>
+                <div className="cap-bar-fill" style={{ width: `${Math.min(100, Math.round((todayEarned / todayCap) * 100))}%` }} />
+                <span className="cap-bar-label">{todayEarned.toLocaleString()} / {todayCap.toLocaleString()}</span>
+              </div>
+            )}
             <button
               type="button"
               className="wallet-pill"
@@ -65,7 +73,10 @@ function App() {
               </span>
               {user.balance.toLocaleString()}
             </button>
-            <button className="btn btn-ghost" onClick={() => logout()}>
+            <button className="btn btn-ghost" onClick={() => setHelpOpen(true)} aria-label="Help">
+              Help
+            </button>
+            <button className="btn btn-ghost" onClick={() => { if (window.confirm('Log out of your account?')) logout() }}>
               Logout
             </button>
           </div>
@@ -113,6 +124,8 @@ function App() {
       <BottomSheet open={walletOpen} onClose={() => setWalletOpen(false)} ariaLabel="Wallet">
         <WalletSheet />
       </BottomSheet>
+
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }

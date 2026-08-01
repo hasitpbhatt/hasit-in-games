@@ -6,17 +6,30 @@ export interface ScoreFeedback {
   kind: 'ok' | 'err'
   text: string
   points?: number
+  undoable?: boolean
 }
+
+const UNDO_WINDOW_MS = 5000
 
 export function useScoreSubmit(game: GameId) {
   const startRef = useRef(Date.now())
   const [submitting, setSubmitting] = useState(false)
   const [feedback, setFeedback] = useState<ScoreFeedback | null>(null)
+  const lastSubmitRef = useRef<{ score: number; playSeconds: number; timestamp: number } | null>(null)
 
   const resetTimer = useCallback(() => {
     startRef.current = Date.now()
     setFeedback(null)
   }, [])
+
+  const undo = useCallback(() => {
+    const last = lastSubmitRef.current
+    if (!last || Date.now() - last.timestamp > UNDO_WINDOW_MS) return false
+    lastSubmitRef.current = null
+    setFeedback(null)
+    resetTimer()
+    return true
+  }, [resetTimer])
 
   const submit = useCallback(
     async (score: number) => {
@@ -24,19 +37,24 @@ export function useScoreSubmit(game: GameId) {
       setSubmitting(true)
       setFeedback(null)
       const playSeconds = Math.round((Date.now() - startRef.current) / 1000)
+      lastSubmitRef.current = { score, playSeconds, timestamp: Date.now() }
       try {
         const res = await api.submitScore(game, score, playSeconds)
         if (res.points > 0) {
-          setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points })
+          setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points, undoable: true })
         } else if (res.capped) {
-          setFeedback({ kind: 'ok', text: 'Daily cap reached — no points this round' })
+          setFeedback({ kind: 'ok', text: 'Daily cap reached — no points this round. Cap resets tomorrow.' })
         } else {
-          setFeedback({ kind: 'ok', text: 'Round too short — no points this time' })
+          setFeedback({ kind: 'ok', text: 'Round too short — play at least 5 seconds to earn points.' })
         }
       } catch (err) {
+        lastSubmitRef.current = null
         setFeedback({
           kind: 'err',
-          text: err instanceof Error ? err.message : 'Failed to submit score',
+          text:
+            err instanceof Error
+              ? err.message
+              : 'Failed to submit score — check your connection and try again',
         })
       } finally {
         setSubmitting(false)
@@ -45,5 +63,5 @@ export function useScoreSubmit(game: GameId) {
     [game, submitting],
   )
 
-  return { submit, submitting, feedback, resetTimer }
+  return { submit, submitting, feedback, resetTimer, undo }
 }

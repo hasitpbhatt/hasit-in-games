@@ -52,6 +52,9 @@ export function LoginForm() {
             required
           />
         </label>
+        <p className="auth-warning" role="note">
+          Lost your username or password? It cannot be recovered — your account is irreversibly tied to them.
+        </p>
         {error && (
           <p className="error" role="alert">
             {error}

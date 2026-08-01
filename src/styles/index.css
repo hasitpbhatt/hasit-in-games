@@ -123,6 +123,27 @@ body {
   font-weight: 500;
 }
 
+.cap-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 100px;
+}
+
+.cap-bar-fill {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--accent-gradient);
+  transition: width 0.3s var(--ease-out);
+}
+
+.cap-bar-label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
 .chip-today {
   color: var(--success);
   background: var(--success-soft);
@@ -338,6 +359,13 @@ main {
   border-color: var(--accent-2);
   box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18);
   background: rgba(0, 0, 0, 0.4);
+}
+
+.auth-warning {
+  margin: 0;
+  font-size: 12px;
+  color: var(--warning);
+  line-height: 1.4;
 }
 
 .error {

@@ -97,7 +97,7 @@ export default function Game2048() {
   const [best, setBest] = useState(() => Number(localStorage.getItem(STORAGE_KEY) ?? 0))
   const [over, setOver] = useState(false)
   const [bumps, setBumps] = useState<boolean[]>([])
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('2048')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('2048')
   const prevGridRef = useRef<Grid>(grid)
   const touchStart = useRef<{ x: number; y: number } | null>(null)
 
@@ -204,7 +204,7 @@ export default function Game2048() {
       </div>
 
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
 
       {over && (
         <div className="overlay" role="dialog" aria-modal="true" aria-label="Game over">

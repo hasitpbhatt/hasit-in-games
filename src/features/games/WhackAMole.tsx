@@ -15,7 +15,7 @@ export default function WhackAMole() {
   const [score, setScore] = useState(0)
   const [running, setRunning] = useState(false)
   const [finished, setFinished] = useState(false)
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('whack')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('whack')
   const timers = useRef<number[]>([])
   const scoreRef = useRef(0)
 
@@ -131,7 +131,7 @@ export default function WhackAMole() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
     </div>
   )
 }

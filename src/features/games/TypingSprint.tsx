@@ -77,7 +77,7 @@ export default function TypingSprint() {
   const [running, setRunning] = useState(false)
   const [finished, setFinished] = useState(false)
   const [correctChars, setCorrectChars] = useState(0)
-  const { submit, submitting, feedback, resetTimer } = useScoreSubmit('typing')
+  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('typing')
   const inputRef = useRef<HTMLInputElement>(null)
   const countRef = useRef(0)
 
@@ -209,7 +209,7 @@ export default function TypingSprint() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} />
+      <ScoreBanner feedback={feedback} onUndo={undo} />
     </div>
   )
 }
