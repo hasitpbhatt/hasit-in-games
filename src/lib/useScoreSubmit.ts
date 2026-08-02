@@ -1,7 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import { api } from './api'
 import type { GameId } from './points'
+import type { ScoreDetail } from './types'
 import { useAuth } from '../store/auth'
+import { useProgress } from '../store/progress'
 import { vibrate } from './haptics'
 
 export interface ScoreFeedback {
@@ -54,15 +56,21 @@ export function useScoreSubmit(game: GameId) {
   }, [undoing])
 
   const submit = useCallback(
-    async (score: number) => {
+    async (score: number, detail?: ScoreDetail) => {
       if (submitting) return
       setSubmitting(true)
       setFeedback(null)
       const playSeconds = Math.round((Date.now() - startRef.current) / 1000)
       lastSubmitRef.current = { score, playSeconds, timestamp: Date.now() }
       try {
-        const res = await api.submitScore(game, score, playSeconds)
+        const res = await api.submitScore(game, score, playSeconds, detail)
         useAuth.getState().applyEarned(res.balance, res.todayEarned)
+        // Only server-accepted runs advance the narrative progression layer
+        // (achievements, titles, chambers, streak) — bot/garbage scores earn 0
+        // points and never update bests.
+        if (res.points > 0 || res.capped) {
+          useProgress.getState().recordAccepted(game, score, detail?.highestTile, res.points)
+        }
         if (res.points > 0) {
           vibrate(30)
           setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points, undoable: true })

@@ -6,11 +6,26 @@ import {
   isKnownGame,
   pointsForScore,
   todayUtc,
+  type ScoreDetail,
 } from '../_shared/economy'
 import { error, json, readBody, type Env } from '../_shared/http'
 import { rateLimitOk } from '../_shared/rateLimit'
 
 const MAX_SCORE = 1_000_000
+
+// 2048 board tiles are powers of two and never destroy value, so the highest
+// tile ever reached is present on the final board and can't exceed the score
+// (the cumulative sum of merged tiles).
+function validHighestTile(ht: unknown, score: number): ht is number {
+  return (
+    typeof ht === 'number' &&
+    Number.isInteger(ht) &&
+    ht >= 16 &&
+    ht <= 8192 &&
+    (ht & (ht - 1)) === 0 &&
+    ht <= score
+  )
+}
 
 // Reserve against the global daily pot. Atomic: the conditional UPDATE fails
 // (changes !== 1) if the pot is already exhausted, so concurrent submits can't
@@ -84,9 +99,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return error('Too many submissions — slow down', 429)
   }
 
-  let body: { game?: string; score?: number; playSeconds?: number }
+  let body: { game?: string; score?: number; playSeconds?: number; detail?: ScoreDetail }
   try {
-    body = await readBody<{ game?: string; score?: number; playSeconds?: number }>(context.request)
+    body = await readBody<{ game?: string; score?: number; playSeconds?: number; detail?: ScoreDetail }>(
+      context.request,
+    )
   } catch {
     return error('Invalid JSON body')
   }
@@ -94,6 +111,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const game = body.game ?? ''
   const score = body.score
   const playSeconds = body.playSeconds
+  const detail = body.detail
 
   // Strict type checks: Number("500") or Boolean(true) must NOT slip through.
   if (!isKnownGame(game)) return error('Unknown game')
@@ -103,8 +121,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (typeof playSeconds !== 'number' || !Number.isFinite(playSeconds) || playSeconds < MIN_PLAY_SECONDS) {
     return error(`Playtime too short — play at least ${MIN_PLAY_SECONDS}s`)
   }
+  if (game === '2048' && !validHighestTile(detail?.highestTile, score)) {
+    return error('Invalid score detail')
+  }
 
-  const points = pointsForScore(game, score)
+  // Soft playtime minimum: points scale linearly from 0 up to the full tier
+  // reward at MIN_PLAY_SECONDS. The hard gate above keeps instant-quit spam
+  // out entirely; this scaling smooths the ramp for borderline rounds.
+  const tierPoints = pointsForScore(game, score, detail)
+  const points = Math.floor(tierPoints * Math.min(1, playSeconds / MIN_PLAY_SECONDS))
   if (points <= 0) return error('Score too low to earn points')
 
   const day = todayUtc(new Date())

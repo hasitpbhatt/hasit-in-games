@@ -1,15 +1,15 @@
 :root {
   /* Palette */
   --bg: #09090b;
-  --surface: rgba(255, 255, 255, 0.03);
+  --surface: rgba(255, 255, 255, 0.04);
   --surface-elevated: #131316;
   --surface-2: #1c1c21;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
 
   --text: #fafafa;
-  --text-muted: #a1a1aa;
-  --text-dim: #71717a;
+  --text-muted: #d1d5db;
+  --text-dim: #9ca3af;
 
   --accent-1: #a78bfa;
   --accent-2: #818cf8;
@@ -33,6 +33,60 @@
   --board-bg: rgba(0, 0, 0, 0.3);
   --card-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
   --card-bg-strong: linear-gradient(165deg, #1c1c21, #131316);
+
+  /* Game tiles - dark mode */
+  --tile-2-bg: #334155;
+  --tile-2-text: #e2e8f0;
+  --tile-4-bg: #3b5998;
+  --tile-4-text: #e2e8f0;
+  --tile-8-bg: #6d28d9;
+  --tile-8-text: #ffffff;
+  --tile-16-bg: #7c3aed;
+  --tile-16-text: #ffffff;
+  --tile-32-bg: #8b5cf6;
+  --tile-32-text: #ffffff;
+  --tile-64-bg: #a855f7;
+  --tile-64-text: #ffffff;
+  --tile-128-bg: #d946ef;
+  --tile-128-text: #ffffff;
+  --tile-256-bg: #ec4899;
+  --tile-256-text: #ffffff;
+  --tile-512-bg: #f43f5e;
+  --tile-512-text: #ffffff;
+  --tile-1024-bg: #f59e0b;
+  --tile-1024-text: #422006;
+  --tile-2048-bg: #22c55e;
+  --tile-2048-text: #052e16;
+
+  /* Reaction game */
+  --reaction-waiting-bg: linear-gradient(160deg, #450a0a, #1c0a0a);
+  --reaction-waiting-text: #fca5a5;
+  --reaction-ready-bg: linear-gradient(160deg, #14532d, #0a2416);
+  --reaction-ready-text: #86efac;
+
+  /* Chamber accents — one per cabinet (the soul layer palette) */
+  --chamber-reaction: #fb7185;
+  --chamber-memory: #f472b6;
+  --chamber-whack: #f59e0b;
+  --chamber-snake: #22c55e;
+  --chamber-typing: #60a5fa;
+  --chamber-pinpoint: #34d399;
+  --chamber-queens: #a78bfa;
+  --chamber-tango: #fb923c;
+  --chamber-2048: #d946ef;
+
+  /* Cabinet status */
+  --status-healed: #34d399;
+  --status-healed-soft: rgba(52, 211, 153, 0.14);
+  --status-active: #8b8494;
+  --status-active-soft: rgba(139, 132, 148, 0.16);
+
+  /* Arcade soul meter — drained grey → violet → dawn green */
+  --soul-track: var(--surface-2);
+  --soul-gradient: linear-gradient(90deg, #6b7280 0%, #a78bfa 45%, #4ade80 100%);
+
+  /* Danger gradient */
+  --danger-gradient: linear-gradient(135deg, #f87171, #ef4444);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -65,15 +119,15 @@
 
 :root[data-theme='light'] {
   --bg: #f5f6fa;
-  --surface: rgba(0, 0, 0, 0.025);
+  --surface: rgba(0, 0, 0, 0.03);
   --surface-elevated: #ffffff;
   --surface-2: #ececf2;
   --border: rgba(0, 0, 0, 0.1);
   --border-strong: rgba(0, 0, 0, 0.2);
 
   --text: #16161c;
-  --text-muted: #52525c;
-  --text-dim: #8a8a96;
+  --text-muted: #3f3f46;
+  --text-dim: #52525b;
 
   --success: #059669;
   --success-soft: rgba(5, 150, 105, 0.12);
@@ -87,6 +141,43 @@
   --board-bg: rgba(0, 0, 0, 0.06);
   --card-bg: linear-gradient(165deg, #ffffff, #ececf3);
   --card-bg-strong: linear-gradient(165deg, #ffffff, #e6e6ee);
+
+  /* Game tiles - light mode */
+  --tile-2-bg: #bfdbfe;
+  --tile-2-text: #1e3a5f;
+  --tile-4-bg: #93c5fd;
+  --tile-4-text: #1e3a5f;
+  --tile-8-bg: #c4b5fd;
+  --tile-8-text: #2e1065;
+  --tile-16-bg: #a78bfa;
+  --tile-16-text: #ffffff;
+  --tile-32-bg: #8b5cf6;
+  --tile-32-text: #ffffff;
+  --tile-64-bg: #d946ef;
+  --tile-64-text: #ffffff;
+  --tile-128-bg: #e879f9;
+  --tile-128-text: #ffffff;
+  --tile-256-bg: #f472b6;
+  --tile-256-text: #ffffff;
+  --tile-512-bg: #fb7185;
+  --tile-512-text: #ffffff;
+  --tile-1024-bg: #fbbf24;
+  --tile-1024-text: #422006;
+  --tile-2048-bg: #4ade80;
+  --tile-2048-text: #052e16;
+
+  /* Reaction game */
+  --reaction-waiting-bg: linear-gradient(160deg, #fee2e2, #fecaca);
+  --reaction-waiting-text: #991b1b;
+  --reaction-ready-bg: linear-gradient(160deg, #dcfce7, #bbf7d0);
+  --reaction-ready-text: #166534;
+
+  /* Cabinet status — light theme */
+  --status-active: #6b7280;
+  --status-active-soft: rgba(107, 114, 128, 0.14);
+
+  /* Danger gradient */
+  --danger-gradient: linear-gradient(135deg, #dc2626, #b91c1c);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);

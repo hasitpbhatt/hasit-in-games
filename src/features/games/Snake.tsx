@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ScoreBanner } from './ScoreBanner'
 import { GameHud } from '../../components/GameHud'
+import { FirstTimeTip } from '../../components/FirstTimeTip'
 import { useScoreSubmit } from '../../lib/useScoreSubmit'
 
 const GRID = 20
@@ -35,6 +36,7 @@ export default function Snake() {
   const [over, setOver] = useState(false)
   const [score, setScore] = useState(0)
   const [length, setLength] = useState(0)
+  const [level, setLevel] = useState(1)
   const gameRef = useRef<{
     snake: Point[]
     dir: Direction
@@ -93,6 +95,7 @@ export default function Snake() {
     setOver(false)
     setScore(0)
     setLength(0)
+    setLevel(1)
     resetTimer()
     draw()
   }, [draw, resetTimer])
@@ -118,6 +121,7 @@ export default function Snake() {
       game.ticks += 1
       setScore(game.ticks)
       setLength(game.snake.length)
+      setLevel(Math.min(10, Math.floor(game.ticks / 5) + 1))
       game.food = randomFood(game.snake)
     } else {
       game.snake.pop()
@@ -172,6 +176,14 @@ export default function Snake() {
         ArrowDown: 'down',
         ArrowLeft: 'left',
         ArrowRight: 'right',
+        w: 'up',
+        W: 'up',
+        s: 'down',
+        S: 'down',
+        a: 'left',
+        A: 'left',
+        d: 'right',
+        D: 'right',
       }
       const dir = map[e.key]
       if (!dir) return
@@ -206,6 +218,7 @@ export default function Snake() {
         stats={[
           { label: 'Score', value: score },
           { label: 'Length', value: length || 3 },
+          { label: 'Speed', value: level },
         ]}
         action={
           !running && !over ? (
@@ -229,7 +242,7 @@ export default function Snake() {
         height={LOGICAL}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        aria-label="Snake game board"
+        aria-label="Snake game board — use arrow keys, WASD, or swipe to steer"
       />
 
       {running && (
@@ -256,6 +269,9 @@ export default function Snake() {
       )}
       {submitting && <p className="status">Submitting…</p>}
       <ScoreBanner feedback={feedback} onUndo={undo} undoing={undoing} />
+      <FirstTimeTip storageKey="hasit-games-snake-tip">
+        Use arrow keys, <strong>WASD</strong>, or swipe to steer. Every 5 food the game speeds up — watch the Speed meter.
+      </FirstTimeTip>
     </div>
   )
 }

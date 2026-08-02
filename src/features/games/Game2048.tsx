@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ScoreBanner } from './ScoreBanner'
 import { GameHud } from '../../components/GameHud'
+import { FirstTimeTip } from '../../components/FirstTimeTip'
+import { ParticleBurst } from '../../components/ParticleBurst'
 import { useScoreSubmit } from '../../lib/useScoreSubmit'
 
 const SIZE = 4
@@ -96,6 +98,7 @@ export default function Game2048() {
   const [score, setScore] = useState(0)
   const [best, setBest] = useState(() => Number(localStorage.getItem(STORAGE_KEY) ?? 0))
   const [over, setOver] = useState(false)
+  const [isNewBest, setIsNewBest] = useState(false)
   const [bumps, setBumps] = useState<boolean[]>([])
   const { submit, submitting, feedback, resetTimer, undo, undoing } = useScoreSubmit('2048')
   const prevGridRef = useRef<Grid>(grid)
@@ -120,10 +123,12 @@ export default function Game2048() {
       setBumps(flat.map((v, i) => v > 0 && v !== prevGridRef.current.flat()[i]))
       const newScore = score + res.gained
       setScore(newScore)
+      const newBest = newScore > Number(localStorage.getItem(STORAGE_KEY) ?? 0)
+      setIsNewBest(newBest)
       updateBest(newScore)
       if (!canMove(next)) {
         setOver(true)
-        submit(newScore)
+        submit(newScore, { highestTile: Math.max(...next.flat()) })
       }
     },
     [grid, over, score, submit],
@@ -134,6 +139,7 @@ export default function Game2048() {
     setGrid(addRandomTile(addRandomTile(emptyGrid())))
     setScore(0)
     setOver(false)
+    setIsNewBest(false)
     setBumps([])
     resetTimer()
   }
@@ -205,20 +211,29 @@ export default function Game2048() {
 
       {submitting && <p className="status">Submitting…</p>}
       <ScoreBanner feedback={feedback} onUndo={undo} undoing={undoing} />
+      <FirstTimeTip storageKey="hasit-games-2048-tip">
+        Swipe or use arrow keys to slide tiles. If you earn points, an <strong>Undo</strong> button
+        appears below for a few seconds.
+      </FirstTimeTip>
 
       {over && (
-        <div className="overlay" role="dialog" aria-modal="true" aria-label="Game over">
-          <div className="modal">
-            <h2>Game over</h2>
-            <div className="modal-score">{score.toLocaleString()}</div>
-            <p className="modal-sub">Best score: {best.toLocaleString()}</p>
-            <div className="modal-actions">
-              <button className="btn btn-primary" onClick={start} autoFocus>
-                Play again
-              </button>
+        <>
+          {isNewBest && <ParticleBurst />}
+          <div className="overlay" role="dialog" aria-modal="true" aria-label="Game over">
+            <div className="modal">
+              <h2>{isNewBest ? 'New personal best!' : 'Game over'}</h2>
+              <div className="modal-score">{score.toLocaleString()}</div>
+              <p className="modal-sub">
+                {isNewBest ? 'Outstanding — you smashed your record!' : `Best score: ${best.toLocaleString()}`}
+              </p>
+              <div className="modal-actions">
+                <button className="btn btn-primary" onClick={start} autoFocus>
+                  Play again
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )

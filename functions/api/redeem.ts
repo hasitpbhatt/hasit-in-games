@@ -1,8 +1,7 @@
 import { getUserByToken, readSessionCookie } from '../_shared/db'
-import { MIN_REDEMPTION_POINTS, PAYOUT_CURRENCY } from '../_shared/economy'
+import { MAX_WITHDRAW_POINTS_PER_DAY, MIN_REDEMPTION_POINTS, PAYOUT_CURRENCY } from '../_shared/economy'
 import { faucetCheckUser, faucetSend } from '../_shared/faucetpay'
 import { error, json, readBody, type Env } from '../_shared/http'
-import { rateLimitOk } from '../_shared/rateLimit'
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/
 
@@ -15,10 +14,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   if (!apiKey) {
     return error('Payouts not configured yet', 503)
-  }
-
-  if (!(await rateLimitOk(db, 'redeem', String(user.id)))) {
-    return error('Too many withdraw attempts — try again later', 429)
   }
 
   let body: { faucetpayUsername?: string }
@@ -40,6 +35,42 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (unitAmount < minUnits || pointsCost < MIN_REDEMPTION_POINTS) {
     return error(
       `Not enough points — minimum redemption is ${MIN_REDEMPTION_POINTS.toLocaleString()} points (${minUnits} ${currency})`,
+    )
+  }
+
+  // Daily withdrawal budget — enforced per account, per destination FaucetPay
+  // username, OR per IP. If ANY dimension reaches the cap the withdrawal is
+  // blocked, so neither multi-account (same wallet/IP) nor multi-wallet
+  // (same account/IP) abuse can bypass it. Counts 'paid' + in-flight 'pending'
+  // rows (failed ones are refunded, not counted).
+  const ip = context.request.headers.get('CF-Connecting-IP') ?? 'unknown'
+  const today = new Date().toISOString().slice(0, 10)
+  const [userDay, ipDay, walletDay] = await db.batch([
+    db
+      .prepare(
+        "SELECT COALESCE(SUM(points_cost), 0) AS total FROM payouts WHERE status IN ('paid','pending') AND user_id = ?1 AND date(created_at) = ?2",
+      )
+      .bind(user.id, today),
+    db
+      .prepare(
+        "SELECT COALESCE(SUM(points_cost), 0) AS total FROM payouts WHERE status IN ('paid','pending') AND ip = ?1 AND date(created_at) = ?2",
+      )
+      .bind(ip, today),
+    db
+      .prepare(
+        "SELECT COALESCE(SUM(points_cost), 0) AS total FROM payouts WHERE status IN ('paid','pending') AND faucetpay_username = ?1 AND date(created_at) = ?2",
+      )
+      .bind(faucetpayUsername, today),
+  ])
+  const totalOf = (r: D1Result) => (r.results?.[0] as { total: number } | undefined)?.total ?? 0
+  const overBudget =
+    totalOf(userDay) + pointsCost > MAX_WITHDRAW_POINTS_PER_DAY ||
+    totalOf(ipDay) + pointsCost > MAX_WITHDRAW_POINTS_PER_DAY ||
+    totalOf(walletDay) + pointsCost > MAX_WITHDRAW_POINTS_PER_DAY
+  if (overBudget) {
+    return error(
+      `Daily withdrawal limit reached (${(MAX_WITHDRAW_POINTS_PER_DAY / pointsPerUnit).toLocaleString()} ${currency}/day) — try again tomorrow`,
+      429,
     )
   }
 
@@ -88,8 +119,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   // Create a pending payout row as the idempotency anchor BEFORE touching real money.
   const payoutInsert = await db
-    .prepare('INSERT INTO payouts (user_id, payout_amount, points_cost, status) VALUES (?1, ?2, ?3, ?4)')
-    .bind(user.id, unitAmount, pointsCost, 'pending')
+    .prepare(
+      'INSERT INTO payouts (user_id, payout_amount, points_cost, status, ip, faucetpay_username) VALUES (?1, ?2, ?3, ?4, ?5, ?6)',
+    )
+    .bind(user.id, unitAmount, pointsCost, 'pending', ip, faucetpayUsername)
     .run()
   const payoutRowId = payoutInsert.meta.last_row_id
 

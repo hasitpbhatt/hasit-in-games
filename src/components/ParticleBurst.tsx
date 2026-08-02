@@ -23,6 +23,12 @@ export function ParticleBurst() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // The global reduced-motion CSS can't stop a requestAnimationFrame loop,
+    // so gate the whole effect here. Users who prefer reduced motion get
+    // nothing rendered rather than an animated burst.
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false
+    if (reduced) return
+
     const dpr = window.devicePixelRatio || 1
     const size = Math.min(window.innerWidth, window.innerHeight)
     canvas.width = size * dpr

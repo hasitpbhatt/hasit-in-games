@@ -19,6 +19,12 @@ export interface ScoreResult {
   capped: boolean
 }
 
+// Optional per-game achievement data sent with a score submission.
+// Mirrors functions/_shared/economy.ts ScoreDetail.
+export interface ScoreDetail {
+  highestTile?: number
+}
+
 export interface Payout {
   id: number
   payoutAmount: number

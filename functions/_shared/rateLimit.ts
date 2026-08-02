@@ -3,12 +3,11 @@
 // conditional increment is what makes this race-safe: concurrent requests in
 // the same bucket can't both pass a read-then-write check.
 
-export type RateLimitKind = 'score' | 'auth' | 'redeem'
+export type RateLimitKind = 'score' | 'auth'
 
 const LIMITS: Record<RateLimitKind, { max: number; windowSeconds: number }> = {
   score: { max: 4, windowSeconds: 60 }, // submissions / min / user
   auth: { max: 5, windowSeconds: 60 }, // login or register attempts / min / IP
-  redeem: { max: 2, windowSeconds: 3600 }, // withdraws / hour / user
 }
 
 export async function rateLimitOk(

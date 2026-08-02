@@ -43,9 +43,13 @@ CREATE TABLE IF NOT EXISTS payouts (
   points_cost   INTEGER NOT NULL,
   payout_id     TEXT,
   status        TEXT NOT NULL DEFAULT 'pending',
+  ip            TEXT,
+  faucetpay_username TEXT,
   created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_payouts_user ON payouts(user_id);
+CREATE INDEX IF NOT EXISTS idx_payouts_ip_date ON payouts(ip, created_at);
+CREATE INDEX IF NOT EXISTS idx_payouts_wallet_date ON payouts(faucetpay_username, created_at);
 
 CREATE TABLE IF NOT EXISTS promo_codes (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,

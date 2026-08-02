@@ -41,8 +41,12 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
         {tab === 'points' && (
           <div className="pinpoint-clues">
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 13, lineHeight: 1.5 }}>
-              Every game has a max points-per-play cap. Points are calculated server-side from your score and play time.
-              You earn up to 2,000 points per day. 1,000 points = 1 PEPE via FaucetPay.
+              Points are awarded on a skill tier: the higher your achievement, the more you earn.
+              For example, 2048 pays a full 500 pts only if you reach the 2048 tile — random moves
+              pay little. Every score is validated server-side, and each play needs at least 5
+              seconds. You earn up to 2,000 points per day. 1,000 points = 1 PEPE via FaucetPay.
+              We call points skill credits in the story — the ledger is still points; only
+              redemption converts them to PEPE.
             </p>
           </div>
         )}

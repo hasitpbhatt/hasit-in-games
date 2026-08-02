@@ -1,5 +1,5 @@
 import type { GameId } from './points'
-import type { MeResponse, Payout, ScoreResult } from './types'
+import type { MeResponse, Payout, ScoreDetail, ScoreResult } from './types'
 
 export class ApiError extends Error {
   status: number
@@ -47,10 +47,10 @@ export const api = {
     return request<MeResponse>('/api/me')
   },
 
-  submitScore(game: GameId, score: number, playSeconds: number) {
+  submitScore(game: GameId, score: number, playSeconds: number, detail?: ScoreDetail) {
     return request<ScoreResult>('/api/score', {
       method: 'POST',
-      body: JSON.stringify({ game, score, playSeconds }),
+      body: JSON.stringify({ game, score, playSeconds, detail }),
     })
   },
 

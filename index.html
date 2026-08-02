@@ -3,23 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="Skill-based arcade games on hasit.in. Play, earn points, and redeem them for PEPE via FaucetPay."
+      content="SkillArcade: skill-based arcade games that pay out real PEPE. Play, earn points, and redeem them via FaucetPay."
     />
-    <meta name="theme-color" content="#09090b" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f6fa" media="(prefers-color-scheme: light)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SkillArcade" />
+    <meta property="og:title" content="SkillArcade — play, earn, redeem" />
+    <meta
+      property="og:description"
+      content="Skill-based arcade games that pay out real PEPE. Play, earn points, and redeem them via FaucetPay."
+    />
+    <meta property="og:url" content="https://games.hasit.in/" />
+    <meta property="og:image" content="https://games.hasit.in/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SkillArcade — play, earn, redeem" />
+    <meta
+      name="twitter:description"
+      content="Skill-based arcade games that pay out real PEPE. Play, earn points, and redeem them via FaucetPay."
+    />
+    <meta name="twitter:image" content="https://games.hasit.in/og.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
-    <title>hasit.in/games — play, earn, redeem</title>
+    <title>SkillArcade — play, earn, redeem</title>
     <script>
       ;(function () {
         try {
-          var stored = localStorage.getItem('hasit-theme')
+          var stored = localStorage.getItem('skillarcade-theme') || localStorage.getItem('hasit-theme')
           var dark = stored
             ? stored === 'dark'
             : !window.matchMedia('(prefers-color-scheme: light)').matches
