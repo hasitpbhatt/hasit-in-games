@@ -62,13 +62,16 @@ const TIER_TABLES: Record<string, TierConfig> = {
       [2048, 500],
     ],
   },
-  // Memory Match — score is already moves-based (1200 − (moves − 8) × 50), so
-  // fewer moves = higher score = more points.
+  // Memory Match — score is moves-based (1200 − (moves − 16) × 50, floored at
+  // 1), so fewer moves = higher score = more points. The true minimum for 8
+  // pairs is 16 flips → a perfect game is 1200, so every tier is reachable and
+  // the [1, 10] floor means any completed game still registers.
   memory: {
     mode: 'min',
     metric: 'score',
     max: 300,
     tiers: [
+      [1, 10],
       [400, 40],
       [600, 90],
       [800, 150],
@@ -138,7 +141,8 @@ const TIER_TABLES: Record<string, TierConfig> = {
       [240, 300],
     ],
   },
-  // Queens — solve seconds; faster is better.
+  // Queens — solve seconds; faster is better. The [3600, 20] floor keeps a
+  // slow-but-correct solve from being zeroed (README-documented 20-pt floor).
   queens: {
     mode: 'max',
     metric: 'score',
@@ -148,9 +152,11 @@ const TIER_TABLES: Record<string, TierConfig> = {
       [90, 150],
       [135, 100],
       [180, 50],
+      [3600, 20],
     ],
   },
-  // Tango — solve seconds; faster is better.
+  // Tango — solve seconds; faster is better. [3600, 15] restores the
+  // README-documented 15-pt completion floor.
   tango: {
     mode: 'max',
     metric: 'score',
@@ -160,6 +166,7 @@ const TIER_TABLES: Record<string, TierConfig> = {
       [90, 110],
       [135, 70],
       [180, 30],
+      [3600, 15],
     ],
   },
   // Pinpoint — categories solved in a 60s round.

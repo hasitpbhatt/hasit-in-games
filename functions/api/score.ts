@@ -142,7 +142,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .prepare('INSERT INTO score_events (user_id, game, score, points) VALUES (?1, ?2, ?3, 0)')
       .bind(user.id, game, score)
       .run()
-    return json({ points: 0, balance: user.balance, todayEarned: await todayEarned(db, user.id), capped: true })
+    return json({
+      points: 0,
+      balance: user.balance,
+      todayEarned: await todayEarned(db, user.id),
+      capped: true,
+      capReason: 'pot',
+    })
   }
 
   const userAward = await reserveUser(db, user.id, day, globalAward)
@@ -154,7 +160,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .prepare('INSERT INTO score_events (user_id, game, score, points) VALUES (?1, ?2, ?3, 0)')
       .bind(user.id, game, score)
       .run()
-    return json({ points: 0, balance: user.balance, todayEarned: await todayEarned(db, user.id), capped: true })
+    return json({
+      points: 0,
+      balance: user.balance,
+      todayEarned: await todayEarned(db, user.id),
+      capped: true,
+      capReason: 'user',
+    })
   }
 
   await db.batch([
@@ -170,5 +182,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     balance: newBalance,
     todayEarned: await todayEarned(db, user.id),
     capped: userAward < points,
+    capReason: globalAward < points ? 'pot' : userAward < points ? 'user' : undefined,
   })
 }

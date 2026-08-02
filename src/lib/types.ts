@@ -17,6 +17,9 @@ export interface ScoreResult {
   balance: number
   todayEarned: number
   capped: boolean
+  // Which ceiling ate the round: the shared daily pot ('pot') or the per-user
+  // daily cap ('user'). Undefined when the round wasn't capped.
+  capReason?: 'pot' | 'user'
 }
 
 // Optional per-game achievement data sent with a score submission.

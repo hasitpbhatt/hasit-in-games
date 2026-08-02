@@ -1,4 +1,4 @@
-import type { GameDef } from '../../lib/points'
+import type { GameDef, GameId } from '../../lib/points'
 import { CHAMBERS } from '../../lib/story'
 import { useProgress } from '../../store/progress'
 
@@ -8,6 +8,13 @@ interface GameCardProps {
   onPlay: (id: GameDef['id']) => void
 }
 
+const SCORE_UNIT: Partial<Record<GameId, string>> = {
+  reaction: ' ms',
+  queens: ' s',
+  tango: ' s',
+  '2048': ' tile',
+}
+
 export function GameCard({ game, index, onPlay }: GameCardProps) {
   const chamber = CHAMBERS[game.id]
   const purified = useProgress((s) => s.purified)
@@ -15,6 +22,12 @@ export function GameCard({ game, index, onPlay }: GameCardProps) {
 
   const accent = chamber?.accent ?? 'var(--accent-1)'
   const accentSoft = chamber ? `color-mix(in srgb, ${chamber.accent} 16%, transparent)` : 'var(--border)'
+
+  const thresholdText = chamber
+    ? chamber.metric === 'tile'
+      ? `Heal: reach the ${chamber.threshold} tile`
+      : `Heal: ${chamber.direction === 'lower' ? '≤' : '≥'} ${chamber.threshold}${SCORE_UNIT[game.id] ?? ' pts'}`
+    : null
 
   return (
     <button
@@ -34,6 +47,7 @@ export function GameCard({ game, index, onPlay }: GameCardProps) {
       </span>
       <h3>{chamber?.chamber ?? game.name}</h3>
       <p>{chamber?.hook ?? game.description}</p>
+      {thresholdText && <p className="game-card-threshold">{thresholdText}</p>}
       <div className="game-card-foot">
         <span className="cabinet-status" data-status={healed ? 'healed' : 'active'}>
           {healed ? 'Healed ✓' : 'Nullmoth'}

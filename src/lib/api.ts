@@ -60,10 +60,10 @@ export const api = {
     })
   },
 
-  redeem(faucetpayUsername: string) {
+  redeem(faucetpayUsername: string, amount?: number) {
     return request<{ balance: number; payout: Payout }>('/api/redeem', {
       method: 'POST',
-      body: JSON.stringify({ faucetpayUsername }),
+      body: JSON.stringify({ faucetpayUsername, amount }),
     })
   },
 

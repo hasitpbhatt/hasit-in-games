@@ -48,9 +48,13 @@ export default function ReactionTime() {
       start()
       return
     }
-    if (phase === 'waiting' || phase === 'too-soon') {
+    if (phase === 'waiting') {
       clearTimer()
       setPhase('too-soon')
+      return
+    }
+    if (phase === 'too-soon') {
+      beginTrial()
       return
     }
     if (phase === 'ready') {

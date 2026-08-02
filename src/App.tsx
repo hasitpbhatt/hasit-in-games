@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from './store/auth'
 import { useProgress } from './store/progress'
 import { GAMES, type GameId } from './lib/points'
-import { titleById } from './lib/story'
+import { CHAMBER_ORDER, titleById } from './lib/story'
 import { useTheme } from './lib/useTheme'
 import { GameView } from './features/games/GameView'
 import { GameCard } from './features/games/GameCard'
@@ -199,9 +199,11 @@ function App() {
                   </button>
                 </p>
                 <section className="games-grid" aria-label="Available trials">
-                  {GAMES.map((g, i) => (
-                    <GameCard key={g.id} game={g} index={i} onPlay={openGame} />
-                  ))}
+                  {CHAMBER_ORDER.map((id, i) => {
+                    const g = GAMES.find((def) => def.id === id)
+                    if (!g) return null
+                    return <GameCard key={g.id} game={g} index={i} onPlay={openGame} />
+                  })}
                 </section>
               </>
             )}

@@ -43,6 +43,7 @@ export default function Snake() {
     food: Point
     dead: boolean
     ticks: number
+    pending: Direction[]
   } | null>(null)
   const { submit, submitting, feedback, resetTimer, undo, undoing } = useScoreSubmit('snake')
 
@@ -90,6 +91,7 @@ export default function Snake() {
       food: randomFood([head]),
       dead: false,
       ticks: 0,
+      pending: [],
     }
     setRunning(true)
     setOver(false)
@@ -103,6 +105,11 @@ export default function Snake() {
   const tick = useCallback(() => {
     const game = gameRef.current
     if (!game || game.dead) return
+    // Consume at most ONE queued turn per tick, so rapid inputs can't stack a
+    // 180° reversal (e.g. up then left while moving right) inside a single step.
+    if (game.pending.length > 0) {
+      game.dir = game.pending.shift() as Direction
+    }
     const dirVec = DIRS[game.dir]
     const head = game.snake[0]
     const next: Point = { x: head.x + dirVec.x, y: head.y + dirVec.y }
@@ -165,8 +172,13 @@ export default function Snake() {
       left: 'right',
       right: 'left',
     }
-    if (game.dir === opposite[dir]) return
-    game.dir = dir
+    // Validate against the direction the snake will ACTUALLY move next (the
+    // last queued turn, or the committed one). Rejecting the reverse keeps two
+    // fast inputs inside one tick from turning the snake 180° into its neck.
+    const effective = game.pending.length > 0 ? game.pending[game.pending.length - 1] : game.dir
+    if (dir === effective || dir === opposite[effective]) return
+    if (game.pending.length >= 2) return
+    game.pending.push(dir)
   }, [running])
 
   useEffect(() => {

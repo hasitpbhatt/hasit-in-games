@@ -16,9 +16,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return error('Payouts not configured yet', 503)
   }
 
-  let body: { faucetpayUsername?: string }
+  let body: { faucetpayUsername?: string; amount?: number }
   try {
-    body = await readBody<{ faucetpayUsername?: string }>(context.request)
+    body = await readBody<{ faucetpayUsername?: string; amount?: number }>(context.request)
   } catch {
     return error('Invalid JSON body')
   }
@@ -29,7 +29,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const { currency, pointsPerUnit, minUnits, unitsPerWhole } = PAYOUT_CURRENCY
-  const unitAmount = Math.floor(user.balance / pointsPerUnit)
+  // Withdrawal is capped at the daily budget so a large balance can never
+  // dead-lock itself out of redemption (the old full-balance math sent the
+  // whole balance and got permanently blocked past the 20-PEPE/day cap).
+  const maxUnits = Math.floor(MAX_WITHDRAW_POINTS_PER_DAY / pointsPerUnit)
+  const affordable = Math.floor(user.balance / pointsPerUnit)
+
+  let unitAmount: number
+  if (body.amount != null) {
+    if (!Number.isInteger(body.amount) || body.amount < minUnits || body.amount > maxUnits) {
+      return error(`Enter a withdrawal amount between ${minUnits} and ${maxUnits} ${currency}`)
+    }
+    unitAmount = Math.min(body.amount, affordable)
+  } else {
+    // Backwards compatible: withdraw the full balance, but never past the cap.
+    unitAmount = Math.min(affordable, maxUnits)
+  }
   const pointsCost = unitAmount * pointsPerUnit
 
   if (unitAmount < minUnits || pointsCost < MIN_REDEMPTION_POINTS) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../lib/api'
-import { MIN_REDEMPTION_POINTS, PAYOUT_CURRENCY } from '../lib/points'
+import { MAX_WITHDRAW_POINTS_PER_DAY, MIN_REDEMPTION_POINTS, PAYOUT_CURRENCY } from '../lib/points'
 import { useAuth } from '../store/auth'
 import { ConfirmModal } from '../components/ConfirmModal'
 import { EmptyState } from '../components/EmptyState'
@@ -11,6 +11,7 @@ export function WalletSheet() {
   const { user, todayEarned, todayCap, loadPayouts, payouts, applyPromoCode, applyEarned } = useAuth()
   const [faucet, setFaucet] = useState('')
   const [faucetError, setFaucetError] = useState<string | null>(null)
+  const [amount, setAmount] = useState(1)
   const [busy, setBusy] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [celebrate, setCelebrate] = useState(false)
@@ -25,7 +26,11 @@ export function WalletSheet() {
 
   const { symbol } = PAYOUT_CURRENCY
   const eligible = user.balance >= MIN_REDEMPTION_POINTS
-  const payoutUnits = Math.floor(user.balance / PAYOUT_CURRENCY.pointsPerUnit)
+  // Cap the withdrawable amount at the daily budget so a balance past 20 PEPE
+  // still has a redemption path (the server caps again — this is just display).
+  const maxWithdrawUnits = Math.floor(MAX_WITHDRAW_POINTS_PER_DAY / PAYOUT_CURRENCY.pointsPerUnit)
+  const maxAmount = Math.min(Math.floor(user.balance / PAYOUT_CURRENCY.pointsPerUnit), maxWithdrawUnits)
+  const safeAmount = Math.min(Math.max(1, amount), Math.max(1, maxAmount))
   const capPct = todayCap > 0 ? Math.min(100, Math.round((todayEarned / todayCap) * 100)) : 0
   const pointsToGo = MIN_REDEMPTION_POINTS - user.balance
 
@@ -52,11 +57,12 @@ export function WalletSheet() {
     setBusy(true)
     setMessage(null)
     try {
-      const res = await api.redeem(faucet.trim())
+      const res = await api.redeem(faucet.trim(), safeAmount)
       applyEarned(res.balance, todayEarned)
       setMessage({ kind: 'ok', text: `Payout sent! ${res.payout.payoutAmount} ${symbol} on its way to your FaucetPay.` })
       setFaucet('')
       setFaucetError(null)
+      setAmount(1)
       setCelebrate(true)
       window.setTimeout(() => setCelebrate(false), 2500)
       loadPayouts()
@@ -89,7 +95,7 @@ export function WalletSheet() {
         <div>
           <div className="wallet-pts">{user.balance.toLocaleString()}</div>
           <div className="pts-label">
-            points · {payoutUnits} {symbol} ready to withdraw
+            points · {maxAmount} {symbol} ready to withdraw
           </div>
         </div>
         <div className="wallet-progress-block">
@@ -128,11 +134,30 @@ export function WalletSheet() {
               </span>
             )}
           </label>
+          {eligible && (
+            <label className="auth-field">
+              Amount ({symbol})
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={maxWithdrawUnits}
+                step={1}
+                value={safeAmount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                disabled={busy}
+                aria-label={`Amount of ${symbol} to withdraw`}
+              />
+              <span className="field-note">
+                Max {maxAmount} {symbol} (up to {maxWithdrawUnits}/day)
+              </span>
+            </label>
+          )}
           <button className="btn btn-primary btn-lg btn-block" disabled={!canRedeem}>
             {busy
               ? 'Sending…'
               : eligible && faucetValid
-                ? `Withdraw ${payoutUnits} ${symbol} (${(payoutUnits * PAYOUT_CURRENCY.pointsPerUnit).toLocaleString()} pts)`
+                ? `Withdraw ${safeAmount} ${symbol} (${(safeAmount * PAYOUT_CURRENCY.pointsPerUnit).toLocaleString()} pts)`
                 : eligible
                   ? 'Enter your FaucetPay username'
                   : `Need ${pointsToGo.toLocaleString()} more pts`}
@@ -172,8 +197,8 @@ export function WalletSheet() {
 
       <ConfirmModal
         open={confirming}
-        title={`Withdraw ${payoutUnits} ${symbol}?`}
-        message={`${payoutUnits} ${symbol} (${(payoutUnits * PAYOUT_CURRENCY.pointsPerUnit).toLocaleString()} pts) will be sent to ${faucet.trim()}. This cannot be undone.`}
+        title={`Withdraw ${safeAmount} ${symbol}?`}
+        message={`${safeAmount} ${symbol} (${(safeAmount * PAYOUT_CURRENCY.pointsPerUnit).toLocaleString()} pts) will be sent to ${faucet.trim()}. This cannot be undone.`}
         confirmLabel="Withdraw"
         onConfirm={doRedeem}
         onCancel={() => setConfirming(false)}

@@ -76,9 +76,13 @@ export function useScoreSubmit(game: GameId) {
           setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points, undoable: true })
         } else if (res.capped) {
           vibrate([40, 40, 40])
-          setFeedback({ kind: 'ok', text: 'Daily cap reached — no points this round. Cap resets tomorrow.' })
+          const text =
+            res.capReason === 'pot'
+              ? 'The shared pot is earned out for today — your run still counts. It refills at midnight UTC.'
+              : 'Your daily cap is reached — no points this round. It resets at midnight UTC.'
+          setFeedback({ kind: 'ok', text })
         } else {
-          setFeedback({ kind: 'ok', text: 'Round too short — play at least 5 seconds to earn points.' })
+          setFeedback({ kind: 'ok', text: 'No points this round.' })
         }
       } catch (err) {
         lastSubmitRef.current = null

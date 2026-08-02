@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useFocusTrap } from '../lib/useFocusTrap'
 
 interface BottomSheetProps {
   open: boolean
@@ -13,7 +14,7 @@ export function BottomSheet({ open, onClose, children, ariaLabel = 'Bottom sheet
   const [offset, setOffset] = useState(0)
   const [dragging, setDragging] = useState(false)
   const dragStart = useRef<number>(0)
-  const sheetRef = useRef<HTMLDivElement>(null)
+  const sheetRef = useFocusTrap<HTMLDivElement>(open)
 
   useEffect(() => {
     if (!open) {
@@ -25,7 +26,6 @@ export function BottomSheet({ open, onClose, children, ariaLabel = 'Bottom sheet
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', onKey)
-    sheetRef.current?.focus()
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKey)
@@ -35,6 +35,9 @@ export function BottomSheet({ open, onClose, children, ariaLabel = 'Bottom sheet
   if (!open) return null
 
   const onPointerDown = (e: React.PointerEvent) => {
+    // Only the sheet frame (grabber / empty space) drags to close; presses
+    // inside the scrollable content must scroll, not slide the sheet.
+    if ((e.target as HTMLElement).closest('.sheet-content')) return
     setDragging(true)
     dragStart.current = e.clientY
   }

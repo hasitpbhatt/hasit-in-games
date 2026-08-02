@@ -302,9 +302,9 @@ export const TITLES: TitleDef[] = [
   {
     id: 'chronicler',
     name: 'Order Chronicler',
-    desc: 'All nine cabinets purified.',
+    desc: 'All ten cabinets purified.',
     rank: 4,
-    test: (s) => s.purified.length >= 9,
+    test: (s) => s.purified.length >= CHAMBER_ORDER.length,
   },
   {
     id: 'warden',

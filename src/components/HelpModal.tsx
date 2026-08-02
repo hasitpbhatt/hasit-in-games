@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { GAMES } from '../lib/points'
+import { useFocusTrap } from '../lib/useFocusTrap'
 
 interface HelpModalProps {
   open: boolean
@@ -8,6 +9,7 @@ interface HelpModalProps {
 
 export function HelpModal({ open, onClose }: HelpModalProps) {
   const [tab, setTab] = useState('rules')
+  const modalRef = useFocusTrap<HTMLDivElement>(open)
 
   useEffect(() => {
     if (!open) return
@@ -22,7 +24,7 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
 
   return (
     <div className="overlay" onClick={onClose} role="presentation">
-      <div className="modal" role="dialog" aria-modal="true" aria-label="Help" onClick={(e) => e.stopPropagation()}>
+      <div className="modal" role="dialog" aria-modal="true" aria-label="Help" tabIndex={-1} ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <h2>How to Play</h2>
         <div className="modal-actions" style={{ gap: 6 }}>
           <button className="btn btn-soft" onClick={() => setTab('rules')}>Rules</button>

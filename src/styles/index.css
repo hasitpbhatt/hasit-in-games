@@ -241,8 +241,8 @@ body {
 }
 
 .btn-primary {
-  background: var(--accent-gradient);
-  color: var(--text);
+  background: var(--accent-gradient-btn);
+  color: #fff;
   box-shadow: var(--shadow-glow);
 }
 
@@ -456,6 +456,13 @@ main {
   line-height: 1.4;
 }
 
+.field-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
 .error {
   color: var(--danger);
   font-size: 14px;
@@ -617,6 +624,13 @@ main {
   font-size: 13px;
   margin: 0;
   line-height: 1.45;
+}
+
+.game-card-threshold {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--text-dim);
 }
 
 .game-card-foot {
@@ -1415,6 +1429,14 @@ main {
   touch-action: auto;
 }
 
+/* Phones: full-bleed the 8×8 board so cells clear the 44px tap floor — the
+   container's 20px side padding would otherwise shave cells to ~40px. */
+@media (max-width: 430px) {
+  .queens-wrap {
+    width: min(420px, calc(100vw - 8px));
+  }
+}
+
 .queens-grid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -1733,7 +1755,7 @@ main {
   position: relative;
   animation: sheet-up var(--dur-med) var(--ease-out);
   transition: transform var(--dur-quick) ease-out;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .sheet-dragging {
@@ -2146,7 +2168,7 @@ main {
   display: flex;
   justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -2225,7 +2247,7 @@ main {
   left: 12px;
   z-index: 1;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   color: var(--text-dim);
   background: var(--surface);
@@ -2239,7 +2261,7 @@ main {
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   padding: 3px 9px;
   border-radius: var(--r-full);
@@ -2270,7 +2292,7 @@ main {
 /* Game view framing */
 .chamber-tag {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -2320,7 +2342,7 @@ main {
 
 .unlock-toast-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--success);

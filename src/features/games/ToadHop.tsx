@@ -95,7 +95,10 @@ export default function ToadHop() {
   }, [phase, endRound])
 
   const startCharge = useCallback(() => {
-    if (phase !== 'idle') return
+    // The ref guard blocks the double-fire when both the window keydown and
+    // the focused element's own handler run for the same Space press — two
+    // rAF loops would otherwise double the charge rate.
+    if (phase !== 'idle' || chargingRef.current) return
     chargingRef.current = true
     inBandRef.current = false
     chargeRef.current = 0
@@ -118,7 +121,7 @@ export default function ToadHop() {
   }, [phase])
 
   const release = useCallback(() => {
-    if (phase !== 'charging') return
+    if (phase !== 'charging' || !chargingRef.current) return
     chargingRef.current = false
     cancelAnimationFrame(rafRef.current)
     const c = chargeRef.current
@@ -212,10 +215,14 @@ export default function ToadHop() {
 
       <div
         className={`toad-charge${phase === 'charging' ? ' is-charging' : ''}${inBand ? ' in-band' : ''}`}
-        onPointerDown={startCharge}
+        onPointerDown={(e) => {
+          // Capture so the release registers even if the finger drifts off the
+          // element — otherwise a stray pointerleave would drop the charge early.
+          e.currentTarget.setPointerCapture?.(e.pointerId)
+          startCharge()
+        }}
         onPointerUp={release}
         onPointerCancel={release}
-        onPointerLeave={release}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {

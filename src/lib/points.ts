@@ -23,6 +23,9 @@ export const DAILY_USER_CAP = 2_000
 // Minimum play time (seconds) before a score is accepted — anti-automation.
 export const MIN_PLAY_SECONDS = 5
 
+// Daily withdrawal budget (points) — mirrors functions/_shared/economy.ts.
+export const MAX_WITHDRAW_POINTS_PER_DAY = 20_000
+
 export const GAME_IDS = [
   '2048',
   'memory',

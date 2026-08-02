@@ -59,7 +59,7 @@ export default function MemoryMatch() {
         setMatches(newMatches)
         if (newMatches === PAIRS) {
           setDone(true)
-          const score = Math.max(0, 1200 - (moves - PAIRS) * 50)
+          const score = Math.max(1, 1200 - (moves - PAIRS * 2) * 50)
           submit(score)
         }
       } else {
@@ -69,7 +69,7 @@ export default function MemoryMatch() {
     return () => window.clearTimeout(timer)
   }, [picks, deck, matches, moves, submit])
 
-  const score = useMemo(() => Math.max(0, 1200 - (moves - PAIRS) * 50), [moves])
+  const score = useMemo(() => Math.max(1, 1200 - (moves - PAIRS * 2) * 50), [moves])
 
   const flip = (index: number) => {
     if (locked || done) return
