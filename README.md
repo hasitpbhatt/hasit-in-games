@@ -1,7 +1,7 @@
 # hasit-in-games
 
 Skill-based arcade games on **games.hasit.in**. Play → earn points → redeem for
-TRX via FaucetPay. Deliberately small budget: **~$0.10/day (~$3/month)** in
+PEPE via FaucetPay. Deliberately small budget: **~$0.10/day (~$3/month)** in
 total payouts.
 
 See [`docs/roadmap.md`](docs/roadmap.md) for the full plan, economy, and
@@ -13,17 +13,17 @@ locked decisions.
 
 A minimalist arcade lobby where every game is **skill-based only** — no luck,
 no wagers. Players register with a username + password, play games to earn
-points, and redeem accumulated points for TRX sent to their FaucetPay wallet.
+points, and redeem accumulated points for PEPE sent to their FaucetPay wallet.
 
 Key properties:
 
 | Property | Value |
 |---|---|
-| Payout coin | TRX (via FaucetPay) |
-| Conversion | 1 TRX = 10,000 points |
+| Payout coin | PEPE (via FaucetPay) |
+| Conversion | 1 PEPE = 1,000 points |
 | Global daily pot | 5,000 points (~$0.10/day) |
 | Per-user daily cap | 2,000 points |
-| Min. redemption | 1 TRX (10,000 points) |
+| Min. redemption | 1 PEPE (1,000 points) |
 | Anti-abuse | Min 5s playtime, server-side score validation |
 | Auth | PBKDF2 (100k iters) + salted passwords, 30-day session tokens |
 
@@ -71,7 +71,7 @@ If either cap is hit, the play is still recorded but no points are awarded
 | API | Cloudflare Pages Functions (TypeScript) |
 | Database | Cloudflare D1 (SQLite) |
 | Auth | Web Crypto (PBKDF2-HMAC-SHA256), HttpOnly session cookies |
-| Payouts | FaucetPay REST API (TRX) |
+| Payouts | FaucetPay REST API (PEPE) |
 | Linting | Oxlint |
 
 ---
@@ -157,7 +157,7 @@ handled via an HttpOnly session cookie (`hasit_session`).
 | `/api/logout` | POST | ✅ | Delete session |
 | `/api/me` | GET | ✅ | Current user profile + balance + daily progress |
 | `/api/score` | POST | ✅ | Submit a game result; server re-validates + credits points |
-| `/api/redeem` | POST | ✅ | Validate FaucetPay username + send TRX |
+| `/api/redeem` | POST | ✅ | Validate FaucetPay username + send PEPE |
 | `/api/redeem-code` | POST | ✅ | Redeem a promo code → credit balance |
 | `/api/payouts` | GET | ✅ | List own payout history |
 | `/api/admin/codes` | POST | admin | Create a promo code |
@@ -306,4 +306,4 @@ binds the D1 database and makes secrets available as environment variables.
 
 - **Cloudflare Pages / D1 / Functions:** free tier (covers current traffic).
 - **FaucetPay:** $0 fees on sends.
-- **Real spend:** ~$3/month payout budget + one-time TRX funding (~$5–10 to start).
+- **Real spend:** ~$3/month payout budget + one-time PEPE funding (~$5–10 to start).

@@ -27,7 +27,7 @@ export function LoginForm() {
     <div className="auth-wrap">
       <form className="auth-card" onSubmit={submit}>
         <h2>{mode === 'login' ? 'Welcome back' : 'Create account'}</h2>
-        <p className="sub">Play skill-based games, earn points, redeem for TRX via FaucetPay.</p>
+        <p className="sub">Play skill-based games, earn points, redeem for PEPE via FaucetPay.</p>
         <label className="auth-field">
           Username
           <input

@@ -77,7 +77,6 @@ export function ParticleBurst() {
       ref={canvasRef}
       className="particle-burst"
       aria-hidden
-      style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 70 }}
     />
   )
 }

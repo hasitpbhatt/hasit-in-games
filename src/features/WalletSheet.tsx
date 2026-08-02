@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
 import { api } from '../lib/api'
-import { MIN_REDEMPTION_POINTS } from '../lib/points'
+import { MIN_REDEMPTION_POINTS, PAYOUT_CURRENCY } from '../lib/points'
 import { useAuth } from '../store/auth'
+import { ConfirmModal } from '../components/ConfirmModal'
+import { EmptyState } from '../components/EmptyState'
 import { PromoBox } from './auth/PromoBox'
 
 export function WalletSheet() {
   const { user, todayEarned, todayCap, loadPayouts, payouts, applyPromoCode, applyEarned } = useAuth()
   const [faucet, setFaucet] = useState('')
   const [busy, setBusy] = useState(false)
+  const [confirming, setConfirming] = useState(false)
   const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
 
   useEffect(() => {
@@ -17,20 +20,20 @@ export function WalletSheet() {
 
   if (!user) return null
 
+  const { symbol } = PAYOUT_CURRENCY
   const eligible = user.balance >= MIN_REDEMPTION_POINTS
-  const trx = Math.floor(user.balance / MIN_REDEMPTION_POINTS)
+  const payoutUnits = Math.floor(user.balance / PAYOUT_CURRENCY.pointsPerUnit)
   const capPct = todayCap > 0 ? Math.min(100, Math.round((todayEarned / todayCap) * 100)) : 0
   const pointsToGo = MIN_REDEMPTION_POINTS - user.balance
 
-  const redeem = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!window.confirm(`Withdraw ${trx} TRX (${(trx * MIN_REDEMPTION_POINTS).toLocaleString()} pts)? This cannot be undone.`)) return
+  const doRedeem = async () => {
+    setConfirming(false)
     setBusy(true)
     setMessage(null)
     try {
       const res = await api.redeem(faucet.trim())
       applyEarned(res.balance, todayEarned)
-      setMessage({ kind: 'ok', text: `Payout sent! ${res.payout.trxAmount} TRX on its way to your FaucetPay.` })
+      setMessage({ kind: 'ok', text: `Payout sent! ${res.payout.payoutAmount} ${symbol} on its way to your FaucetPay.` })
       setFaucet('')
       loadPayouts()
     } catch (err) {
@@ -38,6 +41,12 @@ export function WalletSheet() {
     } finally {
       setBusy(false)
     }
+  }
+
+  const redeem = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!eligible) return
+    setConfirming(true)
   }
 
   const redeemPromo = async (code: string) => {
@@ -48,14 +57,14 @@ export function WalletSheet() {
     <>
       <div className="sheet-heading">
         <h2>Wallet</h2>
-        <p>Your points, daily progress, and TRX redemptions.</p>
+        <p>Your points, daily progress, and {symbol} redemptions.</p>
       </div>
 
       <div className="wallet-hero">
         <div>
           <div className="wallet-pts">{user.balance.toLocaleString()}</div>
           <div className="pts-label">
-            points · {trx} TRX ready to withdraw
+            points · {payoutUnits} {symbol} ready to withdraw
           </div>
         </div>
         <div className="wallet-progress-block">
@@ -70,8 +79,8 @@ export function WalletSheet() {
 
       <div className="redeem-form">
         <div className="redeem-form-head">
-          <h3>Withdraw TRX</h3>
-          <span className="chip">{MIN_REDEMPTION_POINTS.toLocaleString()} pts = 1 TRX</span>
+          <h3>Withdraw {symbol}</h3>
+          <span className="chip">{MIN_REDEMPTION_POINTS.toLocaleString()} pts = 1 {symbol}</span>
         </div>
         <form onSubmit={redeem}>
           <label className="auth-field">
@@ -91,7 +100,7 @@ export function WalletSheet() {
             {busy
               ? 'Sending…'
               : eligible
-                ? `Withdraw ${trx} TRX (${(trx * MIN_REDEMPTION_POINTS).toLocaleString()} pts)`
+                ? `Withdraw ${payoutUnits} ${symbol} (${(payoutUnits * PAYOUT_CURRENCY.pointsPerUnit).toLocaleString()} pts)`
                 : `Need ${pointsToGo.toLocaleString()} more pts`}
           </button>
         </form>
@@ -109,21 +118,32 @@ export function WalletSheet() {
 
       <PromoBox onApply={redeemPromo} />
 
-      {payouts.length > 0 && (
-        <div>
-          <p className="section-label" style={{ margin: '0 0 8px' }}>
-            Payout history
-          </p>
-          {payouts.slice(0, 5).map((p) => (
+      <div>
+        <p className="section-label" style={{ margin: '0 0 8px' }}>
+          Payout history
+        </p>
+        {payouts.length > 0 ? (
+          payouts.slice(0, 5).map((p) => (
             <div className="payout-row" key={p.id}>
               <span>
-                {p.trxAmount} TRX · {p.pointsCost.toLocaleString()} pts
+                {p.payoutAmount} {symbol} · {p.pointsCost.toLocaleString()} pts
               </span>
               <span className={`payout-status ${p.status}`}>{p.status}</span>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <EmptyState emoji="📭" title="No payouts yet" subtitle="Once you redeem, your payout history will appear here." />
+        )}
+      </div>
+
+      <ConfirmModal
+        open={confirming}
+        title={`Withdraw ${payoutUnits} ${symbol}?`}
+        message={`${payoutUnits} ${symbol} (${(payoutUnits * PAYOUT_CURRENCY.pointsPerUnit).toLocaleString()} pts) will be sent to ${faucet.trim()}. This cannot be undone.`}
+        confirmLabel="Withdraw"
+        onConfirm={doRedeem}
+        onCancel={() => setConfirming(false)}
+      />
     </>
   )
 }

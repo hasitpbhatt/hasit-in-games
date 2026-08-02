@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="Skill-based arcade games on hasit.in. Play, earn points, and redeem them for TRX via FaucetPay."
+      content="Skill-based arcade games on hasit.in. Play, earn points, and redeem them for PEPE via FaucetPay."
     />
     <meta name="theme-color" content="#09090b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,6 +16,19 @@
       rel="stylesheet"
     />
     <title>hasit.in/games — play, earn, redeem</title>
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('hasit-theme')
+          var dark = stored
+            ? stored === 'dark'
+            : !window.matchMedia('(prefers-color-scheme: light)').matches
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

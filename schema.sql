@@ -37,13 +37,13 @@ CREATE TABLE IF NOT EXISTS daily_budget (
 );
 
 CREATE TABLE IF NOT EXISTS payouts (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  trx_amount  INTEGER NOT NULL,
-  points_cost INTEGER NOT NULL,
-  payout_id   TEXT,
-  status      TEXT NOT NULL DEFAULT 'pending',
-  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  payout_amount INTEGER NOT NULL,
+  points_cost   INTEGER NOT NULL,
+  payout_id     TEXT,
+  status        TEXT NOT NULL DEFAULT 'pending',
+  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_payouts_user ON payouts(user_id);
 

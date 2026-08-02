@@ -21,7 +21,7 @@ export interface ScoreResult {
 
 export interface Payout {
   id: number
-  trxAmount: number
+  payoutAmount: number
   pointsCost: number
   payoutId: string | null
   status: 'pending' | 'paid' | 'failed'

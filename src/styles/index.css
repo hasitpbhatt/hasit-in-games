@@ -19,8 +19,8 @@ body {
   background-image:
     radial-gradient(60rem 40rem at 120% -10%, rgba(129, 140, 248, 0.14), transparent 60%),
     radial-gradient(50rem 35rem at -20% 10%, rgba(167, 139, 250, 0.1), transparent 55%),
-    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: auto, auto, 48px 48px, 48px 48px;
   background-attachment: fixed;
   min-height: 100vh;
@@ -42,7 +42,7 @@ body {
   padding: 12px 24px;
   padding-top: max(12px, env(safe-area-inset-top));
   border-bottom: 1px solid var(--border);
-  background: rgba(9, 9, 11, 0.72);
+  background: var(--topbar-bg);
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
   position: sticky;
@@ -110,6 +110,7 @@ body {
 .chip-points {
   color: var(--text);
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
   background: linear-gradient(var(--surface), var(--surface)), var(--accent-gradient);
   background-clip: padding-box, border-box;
@@ -134,12 +135,13 @@ body {
   height: 6px;
   border-radius: var(--r-full);
   background: var(--accent-gradient);
-  transition: width 0.3s var(--ease-out);
+  transition: width var(--dur-med) var(--ease-out);
 }
 
 .cap-bar-label {
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   color: var(--text-dim);
   white-space: nowrap;
 }
@@ -184,6 +186,12 @@ body {
   transform: none;
 }
 
+.theme-toggle {
+  padding: 6px 10px;
+  font-size: 15px;
+  line-height: 1;
+}
+
 .btn-primary {
   background: var(--accent-gradient);
   color: #fff;
@@ -226,6 +234,24 @@ body {
   width: 100%;
 }
 
+.btn-danger {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  color: #fff;
+}
+
+/* Accessible keyboard focus — shown only for keyboard/touch input */
+:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.btn:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-offset: 2px;
+}
+
 /* ---------- Layout ---------- */
 
 main {
@@ -240,6 +266,7 @@ main {
 .container {
   max-width: 1080px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* ---------- Loading skeleton ---------- */
@@ -250,13 +277,6 @@ main {
   gap: 16px;
   padding-top: 20vh;
   color: var(--text-muted);
-}
-
-.skeleton {
-  border-radius: var(--r-md);
-  background: linear-gradient(100deg, var(--surface-2) 40%, rgba(255, 255, 255, 0.06) 50%, var(--surface-2) 60%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
 }
 
 .skeleton-ring {
@@ -274,7 +294,7 @@ main {
   border-radius: inherit;
   border: 2px solid transparent;
   border-top-color: var(--accent-2);
-  animation: spin 0.8s linear infinite;
+  animation: spin var(--dur-spin) linear infinite;
 }
 
 @keyframes spin {
@@ -304,7 +324,7 @@ main {
 }
 
 .auth-card {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
   padding: 36px;
@@ -340,7 +360,7 @@ main {
 }
 
 .auth-field input {
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   padding: 11px 14px;
@@ -358,7 +378,7 @@ main {
   outline: none;
   border-color: var(--accent-2);
   box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18);
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--surface-elevated);
 }
 
 .auth-warning {
@@ -372,7 +392,7 @@ main {
   color: var(--danger);
   font-size: 14px;
   margin: 0;
-  animation: shake 0.4s ease;
+  animation: shake var(--dur-slow) ease;
 }
 
 .switch {
@@ -454,7 +474,7 @@ main {
 }
 
 .game-card {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
   padding: 20px;
@@ -536,6 +556,7 @@ main {
 
 .game-meta {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   color: var(--text-dim);
 }
@@ -566,7 +587,7 @@ main {
 }
 
 .game-shell {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
   padding: 24px;
@@ -615,6 +636,7 @@ main {
 .hud-stat strong {
   color: var(--text);
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 16px;
 }
 
@@ -632,7 +654,7 @@ main {
   height: 100%;
   background: var(--accent-gradient);
   border-radius: inherit;
-  transition: width 0.2s linear;
+  transition: width var(--dur) linear;
 }
 
 /* ---------- Score banner / feedback ---------- */
@@ -652,13 +674,21 @@ main {
   border-radius: var(--r-md);
   font-size: 14px;
   font-weight: 600;
-  animation: drop-in 0.3s var(--ease-bounce);
+  animation: drop-in var(--dur-med) var(--ease-bounce);
 }
 
 .score-banner.ok {
   color: var(--success);
   background: var(--success-soft);
   border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.undo-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 12px;
+  padding: 4px 10px;
+  font-variant-numeric: tabular-nums;
 }
 
 .score-banner.err {
@@ -668,10 +698,6 @@ main {
 }
 
 /* ---------- Promo ---------- */
-
-.promo-section {
-  margin: 32px 0;
-}
 
 .promo-box {
   display: flex;
@@ -693,7 +719,7 @@ main {
 .promo-box input {
   flex: 1;
   min-width: 180px;
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   padding: 10px 14px;
@@ -725,24 +751,6 @@ main {
 }
 
 /* ---------- Redeem ---------- */
-
-.redeem-card {
-  max-width: 640px;
-  margin: 0 auto;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.redeem-card h3 {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 700;
-}
 
 .redeem-balance {
   display: flex;
@@ -780,7 +788,7 @@ main {
   height: 100%;
   border-radius: inherit;
   background: var(--accent-gradient);
-  transition: width 0.5s var(--ease-out);
+  transition: width var(--dur-progress) var(--ease-out);
 }
 
 .redeem-note {
@@ -826,6 +834,81 @@ main {
   background: rgba(248, 113, 113, 0.12);
 }
 
+/* ---------- Empty state ---------- */
+
+.fatal {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.fatal-card {
+  background: var(--card-bg-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  max-width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+}
+
+.fatal-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.fatal-card h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.fatal-card p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ---------- Empty state ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  padding: 28px 16px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+
+.empty-state-icon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.empty-state-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.empty-state-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 260px;
+}
+
 /* ---------- shared game stage ---------- */
 
 .game-stage {
@@ -843,7 +926,7 @@ main {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--board-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   padding: 8px;
@@ -864,7 +947,7 @@ main {
 }
 
 .tile.tile-bump {
-  animation: tile-pop 0.22s var(--ease-bounce);
+  animation: tile-pop var(--dur-pop) var(--ease-bounce);
 }
 
 .tile-2   { background: #27324d; color: #dbe2ff; }
@@ -918,7 +1001,7 @@ main {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.35s var(--ease-out);
+  transition: transform var(--dur-med) var(--ease-out);
 }
 
 .memory-face {
@@ -944,7 +1027,7 @@ main {
 
 .memory-card.matched {
   border-color: rgba(52, 211, 153, 0.5);
-  animation: match-glow 0.4s var(--ease-bounce);
+  animation: match-glow var(--dur-slow) var(--ease-bounce);
 }
 
 .memory-card.matched .memory-front {
@@ -997,7 +1080,7 @@ main {
   cursor: pointer;
   background: radial-gradient(circle at 30% 25%, #f59e0b, #b45309 70%);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 -4px 8px rgba(0, 0, 0, 0.3);
-  animation: mole-rise 0.2s var(--ease-out);
+  animation: mole-rise var(--dur) var(--ease-out);
   position: relative;
   z-index: 1;
   border: none;
@@ -1010,7 +1093,7 @@ main {
 }
 
 .whack-mole.whacked {
-  animation: mole-splat 0.15s ease forwards;
+  animation: mole-splat var(--dur-quick) ease forwards;
 }
 
 @keyframes mole-rise {
@@ -1044,7 +1127,7 @@ main {
   text-align: center;
   cursor: pointer;
   border: 1px solid var(--border);
-  transition: background 0.15s ease;
+  transition: background var(--dur-quick) ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   font-weight: 700;
@@ -1088,7 +1171,7 @@ main {
   width: 100%;
   max-width: 420px;
   border-radius: var(--r-md);
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--board-bg);
   border: 1px solid var(--border);
   display: block;
   touch-action: none;
@@ -1140,7 +1223,7 @@ main {
   gap: 8px;
   flex-wrap: wrap;
   min-height: 96px;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--board-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   padding: 16px;
@@ -1170,7 +1253,7 @@ main {
 }
 
 .typing-input {
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   padding: 14px 16px;
@@ -1227,7 +1310,8 @@ main {
   transform: scale(0.92);
 }
 
-.queens-cell.conflict {
+.queens-cell.conflict,
+.queens-cell.has-queen {
   position: relative;
 }
 
@@ -1237,6 +1321,15 @@ main {
   inset: 0;
   border-radius: var(--r-sm);
   box-shadow: inset 0 0 0 3px var(--danger);
+}
+
+.queens-cell.has-queen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.55);
+  background: rgba(167, 139, 250, 0.08);
 }
 
 .queens-hint {
@@ -1376,7 +1469,7 @@ main {
 .pinpoint-input {
   flex: 1;
   min-width: 0;
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   padding: 11px 14px;
@@ -1397,10 +1490,17 @@ main {
 
 /* ---------- Overlay / modal ---------- */
 
+.particle-burst {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--overlay);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: grid;
@@ -1411,7 +1511,7 @@ main {
 }
 
 .modal {
-  background: linear-gradient(165deg, #1c1c21, #131316);
+  background: var(--card-bg-strong);
   border: 1px solid var(--border-strong);
   border-radius: var(--r-lg);
   padding: 32px;
@@ -1419,7 +1519,7 @@ main {
   max-width: 380px;
   text-align: center;
   box-shadow: var(--shadow-lg);
-  animation: modal-pop 0.3s var(--ease-bounce);
+  animation: modal-pop var(--dur-med) var(--ease-bounce);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -1458,34 +1558,45 @@ main {
   flex: 1;
 }
 
+.confirm-modal {
+  max-width: 360px;
+}
+
+.confirm-message {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 /* ---------- Bottom sheet ---------- */
 
 .sheet-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--overlay);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 60;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: fade-in 0.2s ease;
+  animation: fade-in var(--dur) ease;
 }
 
 .sheet {
   width: 100%;
   max-width: 560px;
   max-height: 88vh;
-  background: linear-gradient(180deg, #1c1c21, #131316);
+  background: var(--card-bg-strong);
   border: 1px solid var(--border-strong);
   border-bottom: none;
   border-radius: var(--r-lg) var(--r-lg) 0 0;
   box-shadow: var(--shadow-lg);
   padding: 10px 24px calc(20px + env(safe-area-inset-bottom));
   position: relative;
-  animation: sheet-up 0.32s var(--ease-out);
-  transition: transform 0.15s ease-out;
+  animation: sheet-up var(--dur-med) var(--ease-out);
+  transition: transform var(--dur-quick) ease-out;
   touch-action: none;
 }
 
@@ -1563,6 +1674,7 @@ main {
 
 .wallet-pts {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
   font-size: 32px;
   line-height: 1.1;
@@ -1619,6 +1731,7 @@ main {
   background: var(--surface);
   color: var(--text);
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
   font-size: 14px;
   padding: 7px 14px;
@@ -1725,6 +1838,86 @@ main {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 14px;
+  }
+
+  .topbar {
+    padding: 10px 14px;
+    padding-top: max(10px, env(safe-area-inset-top));
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .chip {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .cap-bar {
+    min-width: 0;
+  }
+
+  .wallet-pill {
+    padding: 6px 11px;
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 28px 0 8px;
+  }
+
+  .section-label {
+    margin: 24px 0 12px;
+  }
+
+  .game-card {
+    padding: 16px;
+  }
+
+  .game-shell {
+    padding: 16px;
+  }
+
+  .game-view-toolbar {
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .auth-card {
+    padding: 24px 20px;
+  }
+
+  .modal {
+    padding: 24px 20px;
+  }
+
+  .sheet {
+    padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .wallet-hero {
+    padding: 14px;
   }
 }
 

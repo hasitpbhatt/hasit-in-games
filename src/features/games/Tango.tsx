@@ -177,7 +177,7 @@ export default function Tango() {
   const secs = elapsed % 60
 
   return (
-    <div className="game-stage tango-wrap">
+    <div className="game-stage">
       <GameHud
         stats={[
           { label: 'Filled', value: `${values.filter((v) => v !== EMPTY).length}/${SIZE * SIZE}` },

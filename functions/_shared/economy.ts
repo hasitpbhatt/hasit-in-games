@@ -1,14 +1,20 @@
 // Server-side economy — AUTHORITATIVE. Client src/lib/points.ts mirrors this.
 // Never trust client-computed points; recompute here from the raw score.
 
-export const POINTS_PER_TRX = 10_000
-export const MIN_REDEMPTION_POINTS = POINTS_PER_TRX
+// Payout currency config — change the coin here (and the client mirror in
+// src/lib/points.ts) and everything else follows.
+export const PAYOUT_CURRENCY = {
+  currency: 'PEPE', // FaucetPay currency code sent to the API
+  symbol: 'PEPE', // display abbreviation
+  pointsPerUnit: 1_000, // points needed to redeem 1 unit
+  minUnits: 1, // minimum redeemable units
+  unitsPerWhole: 1, // FaucetPay amount base unit per whole unit (1 = whole tokens)
+} as const
+
+export const MIN_REDEMPTION_POINTS = PAYOUT_CURRENCY.pointsPerUnit * PAYOUT_CURRENCY.minUnits
 export const DAILY_GLOBAL_POINTS = 5_000
 export const DAILY_USER_CAP = 2_000
 export const MIN_PLAY_SECONDS = 5
-
-// TRX smallest unit: 1 TRX = 1_000_000 suns.
-export const SUNS_PER_TRX = 1_000_000
 
 const GAME_LIMITS: Record<string, number> = {
   '2048': 500,

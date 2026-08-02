@@ -1,5 +1,5 @@
 import { getUserByToken, readSessionCookie } from '../_shared/db'
-import { MIN_REDEMPTION_POINTS, POINTS_PER_TRX, SUNS_PER_TRX } from '../_shared/economy'
+import { MIN_REDEMPTION_POINTS, PAYOUT_CURRENCY } from '../_shared/economy'
 import { faucetCheckUser, faucetSend } from '../_shared/faucetpay'
 import { error, json, readBody, type Env } from '../_shared/http'
 import { rateLimitOk } from '../_shared/rateLimit'
@@ -33,12 +33,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return error('Enter a valid FaucetPay username (3-20 chars)')
   }
 
-  const trxAmount = Math.floor(user.balance / POINTS_PER_TRX)
-  const pointsCost = trxAmount * POINTS_PER_TRX
-  const amountSuns = trxAmount * SUNS_PER_TRX
+  const { currency, pointsPerUnit, minUnits, unitsPerWhole } = PAYOUT_CURRENCY
+  const unitAmount = Math.floor(user.balance / pointsPerUnit)
+  const pointsCost = unitAmount * pointsPerUnit
 
-  if (pointsCost < MIN_REDEMPTION_POINTS || trxAmount < 1) {
-    return error(`Not enough points — minimum redemption is ${MIN_REDEMPTION_POINTS.toLocaleString()} points (1 TRX)`)
+  if (unitAmount < minUnits || pointsCost < MIN_REDEMPTION_POINTS) {
+    return error(
+      `Not enough points — minimum redemption is ${MIN_REDEMPTION_POINTS.toLocaleString()} points (${minUnits} ${currency})`,
+    )
   }
 
   // Verify the FaucetPay user exists before deducting anything.
@@ -54,7 +56,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(pointsCost, faucetpayUsername, user.id)
     .run()
   if (reserve.meta.changes !== 1) {
-    return error('Not enough points — minimum redemption is 10,000 points (1 TRX)')
+    return error(
+      `Not enough points — minimum redemption is ${MIN_REDEMPTION_POINTS.toLocaleString()} points (${minUnits} ${currency})`,
+    )
   }
 
   // Idempotency anchor: if a prior request already created a pending payout,
@@ -84,14 +88,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   // Create a pending payout row as the idempotency anchor BEFORE touching real money.
   const payoutInsert = await db
-    .prepare('INSERT INTO payouts (user_id, trx_amount, points_cost, status) VALUES (?1, ?2, ?3, ?4)')
-    .bind(user.id, trxAmount, pointsCost, 'pending')
+    .prepare('INSERT INTO payouts (user_id, payout_amount, points_cost, status) VALUES (?1, ?2, ?3, ?4)')
+    .bind(user.id, unitAmount, pointsCost, 'pending')
     .run()
   const payoutRowId = payoutInsert.meta.last_row_id
 
   let sendResult
   try {
-    sendResult = await faucetSend(apiKey, amountSuns, faucetpayUsername)
+    sendResult = await faucetSend({
+      apiKey,
+      amount: unitAmount * unitsPerWhole,
+      to: faucetpayUsername,
+      currency,
+    })
   } catch (e) {
     // Refund the reserved points; the payout stays 'failed' for the audit trail.
     await db.batch([
@@ -110,7 +119,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     balance: user.balance - pointsCost,
     payout: {
       id: payoutRowId,
-      trxAmount,
+      payoutAmount: unitAmount,
       pointsCost,
       payoutId: sendResult.payoutId,
       status: 'paid',

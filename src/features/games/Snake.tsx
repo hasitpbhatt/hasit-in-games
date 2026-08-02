@@ -127,18 +127,29 @@ export default function Snake() {
 
   // Recompute the tick interval on every loop so the speed actually ramps up
   // as the snake grows. A fixed setInterval would freeze the difficulty.
+  // rAF + time accumulation keeps the game running at the same real-time pace
+  // even if the tab is backgrounded (setTimeout gets throttled).
   useEffect(() => {
     if (!running) return
-    let id: number
-    const loop = () => {
-      tick()
+    let rafId: number
+    let last = performance.now()
+    let acc = 0
+    const frame = (now: number) => {
       const game = gameRef.current
       if (!game || game.dead) return
+      acc += now - last
+      last = now
       const speed = Math.max(60, BASE_TICK - game.ticks * 2)
-      id = window.setTimeout(loop, speed)
+      while (acc >= speed) {
+        acc -= speed
+        tick()
+        const g = gameRef.current
+        if (!g || g.dead) return
+      }
+      rafId = window.requestAnimationFrame(frame)
     }
-    id = window.setTimeout(loop, BASE_TICK)
-    return () => window.clearTimeout(id)
+    rafId = window.requestAnimationFrame(frame)
+    return () => window.cancelAnimationFrame(rafId)
   }, [running, tick])
 
   const turn = useCallback((dir: Direction) => {

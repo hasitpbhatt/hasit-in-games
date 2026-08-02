@@ -12,6 +12,13 @@ export interface SendResult {
   balance: number
 }
 
+export interface FaucetSendParams {
+  apiKey: string
+  amount: number
+  to: string
+  currency: string
+}
+
 function form(params: Record<string, string>): BodyInit {
   const entries = Object.entries(params)
   const body = new URLSearchParams()
@@ -19,15 +26,15 @@ function form(params: Record<string, string>): BodyInit {
   return body
 }
 
-export async function faucetSend(apiKey: string, amountSuns: number, to: string): Promise<SendResult> {
+export async function faucetSend({ apiKey, amount, to, currency }: FaucetSendParams): Promise<SendResult> {
   const res = await fetch('https://faucetpay.io/api/v1/send', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: form({
       api_key: apiKey,
-      amount: String(amountSuns),
+      amount: String(amount),
       to,
-      currency: 'TRX',
+      currency,
     }),
   })
   const data = (await res.json()) as FaucetPayResponse

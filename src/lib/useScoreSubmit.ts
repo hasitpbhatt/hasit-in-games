@@ -11,6 +11,7 @@ export interface ScoreFeedback {
 }
 
 const UNDO_WINDOW_MS = 5000
+export const UNDO_WINDOW_SECONDS = Math.round(UNDO_WINDOW_MS / 1000)
 
 export function useScoreSubmit(game: GameId) {
   const startRef = useRef(Date.now())

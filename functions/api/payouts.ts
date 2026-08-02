@@ -9,13 +9,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   const rows = await db
-    .prepare('SELECT id, trx_amount, points_cost, payout_id, status, created_at FROM payouts WHERE user_id = ?1 ORDER BY created_at DESC LIMIT 50')
+    .prepare('SELECT id, payout_amount, points_cost, payout_id, status, created_at FROM payouts WHERE user_id = ?1 ORDER BY created_at DESC LIMIT 50')
     .bind(user.id)
-    .all<{ id: number; trx_amount: number; points_cost: number; payout_id: string | null; status: string; created_at: string }>()
+    .all<{ id: number; payout_amount: number; points_cost: number; payout_id: string | null; status: string; created_at: string }>()
 
   const payouts = rows.results.map((r) => ({
     id: r.id,
-    trxAmount: r.trx_amount,
+    payoutAmount: r.payout_amount,
     pointsCost: r.points_cost,
     payoutId: r.payout_id,
     status: r.status,

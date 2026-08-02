@@ -25,6 +25,15 @@
   --danger: #f87171;
   --warning: #fbbf24;
 
+  /* Surfaces */
+  --topbar-bg: rgba(9, 9, 11, 0.72);
+  --grid-line: rgba(255, 255, 255, 0.022);
+  --input-bg: rgba(0, 0, 0, 0.32);
+  --overlay: rgba(0, 0, 0, 0.6);
+  --board-bg: rgba(0, 0, 0, 0.3);
+  --card-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  --card-bg-strong: linear-gradient(165deg, #1c1c21, #131316);
+
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -47,4 +56,40 @@
   --dur-fast: 120ms;
   --dur: 200ms;
   --dur-slow: 400ms;
+  --dur-quick: 150ms;
+  --dur-pop: 220ms;
+  --dur-med: 300ms;
+  --dur-progress: 500ms;
+  --dur-spin: 800ms;
+}
+
+:root[data-theme='light'] {
+  --bg: #f5f6fa;
+  --surface: rgba(0, 0, 0, 0.025);
+  --surface-elevated: #ffffff;
+  --surface-2: #ececf2;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.2);
+
+  --text: #16161c;
+  --text-muted: #52525c;
+  --text-dim: #8a8a96;
+
+  --success: #059669;
+  --success-soft: rgba(5, 150, 105, 0.12);
+  --danger: #dc2626;
+  --warning: #d97706;
+
+  --topbar-bg: rgba(255, 255, 255, 0.78);
+  --grid-line: rgba(0, 0, 0, 0.035);
+  --input-bg: #ffffff;
+  --overlay: rgba(20, 20, 30, 0.45);
+  --board-bg: rgba(0, 0, 0, 0.06);
+  --card-bg: linear-gradient(165deg, #ffffff, #ececf3);
+  --card-bg-strong: linear-gradient(165deg, #ffffff, #e6e6ee);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.18);
+  --shadow-glow: 0 0 28px rgba(129, 140, 248, 0.35);
 }

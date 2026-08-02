@@ -128,7 +128,7 @@ export default function Pinpoint() {
   }
 
   return (
-    <div className="game-stage pinpoint-wrap">
+    <div className="game-stage">
       <GameHud
         stats={[
           { label: 'Solved', value: score },

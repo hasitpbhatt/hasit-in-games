@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react'
 import type { ScoreFeedback } from '../../lib/useScoreSubmit'
+import { UNDO_WINDOW_SECONDS } from '../../lib/useScoreSubmit'
 import { ParticleBurst } from '../../components/ParticleBurst'
 
 interface ScoreBannerProps {
@@ -8,6 +10,17 @@ interface ScoreBannerProps {
 }
 
 export function ScoreBanner({ feedback, onUndo, undoing }: ScoreBannerProps) {
+  const [left, setLeft] = useState(0)
+
+  useEffect(() => {
+    if (!feedback?.undoable) return
+    setLeft(UNDO_WINDOW_SECONDS)
+    const id = window.setInterval(() => {
+      setLeft((l) => (l > 0 ? l - 1 : 0))
+    }, 1000)
+    return () => window.clearInterval(id)
+  }, [feedback?.undoable, feedback?.text])
+
   if (!feedback) return null
   return (
     <>
@@ -22,12 +35,11 @@ export function ScoreBanner({ feedback, onUndo, undoing }: ScoreBannerProps) {
         {feedback.undoable && onUndo && (
           <button
             type="button"
-            className="btn btn-soft"
-            style={{ marginLeft: 'auto', fontSize: 12, padding: '4px 10px' }}
+            className="btn btn-soft undo-btn"
             onClick={onUndo}
-            disabled={undoing}
+            disabled={undoing || left <= 0}
           >
-            {undoing ? 'Undoing…' : 'Undo'}
+            {undoing ? 'Undoing…' : `Undo (${left}s)`}
           </button>
         )}
       </div>
