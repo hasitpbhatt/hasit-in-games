@@ -3,10 +3,21 @@ import { error, json, readBody, type Env } from '../../_shared/http'
 const CODE_RE = /^[A-Za-z0-9]{3,30}$/
 
 // Admin auth: require x-admin-secret header to match ADMIN_SECRET env var.
+// Constant-time compare so timing can't leak the secret length/prefix.
+function secretEquals(a: string, b: string): boolean {
+  const ba = new TextEncoder().encode(a)
+  const bb = new TextEncoder().encode(b)
+  if (ba.length !== bb.length) return false
+  let diff = 0
+  for (let i = 0; i < ba.length; i++) diff |= ba[i] ^ bb[i]
+  return diff === 0
+}
+
 function unauthorized(env: Env, req: Request): boolean {
   const secret = env.ADMIN_SECRET
   if (!secret) return true
-  return req.headers.get('x-admin-secret') !== secret
+  const provided = req.headers.get('x-admin-secret') ?? ''
+  return !secretEquals(provided, secret)
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {

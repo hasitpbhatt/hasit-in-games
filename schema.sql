@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
   salt               TEXT NOT NULL,
   faucetpay_username TEXT,
   balance            INTEGER NOT NULL DEFAULT 0,
-  created_at         TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at         TEXT NOT NULL DEFAULT (datetime('now')),
+  kdf_iterations     INTEGER NOT NULL DEFAULT 600000
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -64,3 +65,17 @@ CREATE TABLE IF NOT EXISTS code_redemptions (
   UNIQUE (code, user_id)
 );
 CREATE INDEX IF NOT EXISTS idx_code_redemptions_user ON code_redemptions(user_id);
+
+CREATE TABLE IF NOT EXISTS user_daily (
+  user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  date          TEXT NOT NULL,
+  points_issued INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, date)
+);
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key    TEXT NOT NULL,
+  bucket INTEGER NOT NULL,
+  count  INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (key, bucket)
+);

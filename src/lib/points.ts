@@ -1,5 +1,6 @@
-// Points economy — single source of truth for the CLIENT.
-// The server (functions/_shared/economy.ts) is authoritative; keep these in sync.
+// Points economy — CLIENT copy of server constants.
+// The server (functions/_shared/economy.ts) is authoritative and recomputes
+// every award from the raw score; scoring formulas live ONLY there.
 
 // 1 TRX = 10,000 points; 1 TRX ≈ $0.20 (verify at launch).
 export const POINTS_PER_TRX = 10_000
@@ -100,42 +101,3 @@ export const GAMES: GameDef[] = [
     maxPointsPerPlay: 150,
   },
 ]
-
-// Client-side mirror of the server scoring formula.
-export function pointsForScore(game: GameId, score: number): number {
-  const def = GAMES.find((g) => g.id === game)
-  if (!def || score <= 0) return 0
-  let points: number
-  switch (game) {
-    case '2048':
-      points = Math.floor(score / 2)
-      break
-    case 'memory':
-      points = Math.floor(score / 4)
-      break
-    case 'whack':
-      points = score * 2
-      break
-    case 'reaction':
-      points = score < 500 ? Math.floor((500 - score) / 3) : 0
-      break
-    case 'snake':
-      points = score * 4
-      break
-    case 'typing':
-      points = Math.floor(score / 2)
-      break
-    case 'queens':
-      points = score > 0 ? Math.max(20, Math.min(200, 200 - score * 2)) : 0
-      break
-    case 'tango':
-      points = score > 0 ? Math.max(15, Math.min(150, 180 - score)) : 0
-      break
-    case 'pinpoint':
-      points = score * 30
-      break
-    default:
-      points = 0
-  }
-  return Math.max(0, Math.min(points, def.maxPointsPerPlay))
-}

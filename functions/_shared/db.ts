@@ -8,6 +8,7 @@ export interface UserRow {
   faucetpay_username: string | null
   balance: number
   created_at: string
+  kdf_iterations: number
 }
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30 // 30 days
@@ -44,12 +45,23 @@ export async function deleteSession(db: D1Database, token: string): Promise<void
 }
 
 export async function todayEarned(db: D1Database, userId: number): Promise<number> {
-  const day = new Date().toISOString().slice(0, 10)
+  const now = new Date()
+  const day = now.toISOString().slice(0, 10)
+  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
+    .toISOString()
+    .slice(0, 10)
+  // Range predicate instead of date(created_at) = ? — keeps the
+  // idx_score_events_user_date index usable.
   const res = await db
-    .prepare("SELECT COALESCE(SUM(points), 0) AS total FROM score_events WHERE user_id = ?1 AND date(created_at) = ?2")
-    .bind(userId, day)
+    .prepare('SELECT COALESCE(SUM(points), 0) AS total FROM score_events WHERE user_id = ?1 AND created_at >= ?2 AND created_at < ?3')
+    .bind(userId, day, next)
     .first<{ total: number }>()
   return res?.total ?? 0
+}
+
+// Expire stale sessions on login so the sessions table doesn't grow forever.
+export async function purgeExpiredSessions(db: D1Database): Promise<void> {
+  await db.prepare('DELETE FROM sessions WHERE expires_at <= ?1').bind(new Date().toISOString()).run()
 }
 
 export function readSessionCookie(req: Request): string | null {
@@ -62,12 +74,12 @@ export function readSessionCookie(req: Request): string | null {
   return null
 }
 
-export function sessionCookie(token: string, maxAge = SESSION_TTL_SECONDS): string {
-  return `hasit_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`
+export function sessionCookie(token: string, maxAge = SESSION_TTL_SECONDS, secure = false): string {
+  return `hasit_session=${token}; Path=/; HttpOnly; SameSite=Lax;${secure ? ' Secure;' : ''} Max-Age=${maxAge}`
 }
 
-export function clearSessionCookie(): string {
-  return `hasit_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+export function clearSessionCookie(secure = false): string {
+  return `hasit_session=; Path=/; HttpOnly; SameSite=Lax;${secure ? ' Secure;' : ''} Max-Age=0`
 }
 
 export type { Env }

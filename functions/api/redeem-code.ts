@@ -51,10 +51,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return error('This promo code is fully used')
   }
 
-  await db.batch([
-    db.prepare('INSERT INTO code_redemptions (code, user_id) VALUES (?1, ?2)').bind(code, user.id),
-    db.prepare('UPDATE users SET balance = balance + ?1 WHERE id = ?2').bind(promo.points, user.id),
-  ])
+  try {
+    await db
+      .prepare('INSERT INTO code_redemptions (code, user_id) VALUES (?1, ?2)')
+      .bind(code, user.id)
+      .run()
+  } catch {
+    // Already redeemed (UNIQUE constraint) — undo the bump so the use isn't burned.
+    await db
+      .prepare('UPDATE promo_codes SET used_count = MAX(0, used_count - 1) WHERE code = ?1')
+      .bind(code)
+      .run()
+    return error('You have already redeemed this code', 409)
+  }
+
+  await db.prepare('UPDATE users SET balance = balance + ?1 WHERE id = ?2').bind(promo.points, user.id).run()
 
   const newBalance = user.balance + promo.points
   return json({ points: promo.points, balance: newBalance })

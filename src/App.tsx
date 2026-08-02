@@ -25,6 +25,7 @@ function App() {
   }, [])
 
   const openGame = (id: GameId) => {
+    if (activeGame) return
     setActiveGame(id)
     window.history.pushState({ game: id }, '')
   }

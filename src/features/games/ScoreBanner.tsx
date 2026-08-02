@@ -4,9 +4,10 @@ import { ParticleBurst } from '../../components/ParticleBurst'
 interface ScoreBannerProps {
   feedback: ScoreFeedback | null
   onUndo?: () => void
+  undoing?: boolean
 }
 
-export function ScoreBanner({ feedback, onUndo }: ScoreBannerProps) {
+export function ScoreBanner({ feedback, onUndo, undoing }: ScoreBannerProps) {
   if (!feedback) return null
   return (
     <>
@@ -24,8 +25,9 @@ export function ScoreBanner({ feedback, onUndo }: ScoreBannerProps) {
             className="btn btn-soft"
             style={{ marginLeft: 'auto', fontSize: 12, padding: '4px 10px' }}
             onClick={onUndo}
+            disabled={undoing}
           >
-            Undo
+            {undoing ? 'Undoing…' : 'Undo'}
           </button>
         )}
       </div>

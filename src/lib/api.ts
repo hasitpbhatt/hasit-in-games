@@ -54,8 +54,14 @@ export const api = {
     })
   },
 
+  undoScore() {
+    return request<{ ok: true; balance: number; todayEarned: number }>('/api/score/undo', {
+      method: 'POST',
+    })
+  },
+
   redeem(faucetpayUsername: string) {
-    return request<{ payout: Payout }>('/api/redeem', {
+    return request<{ balance: number; payout: Payout }>('/api/redeem', {
       method: 'POST',
       body: JSON.stringify({ faucetpayUsername }),
     })

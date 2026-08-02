@@ -1,6 +1,9 @@
 // Auth helpers: password hashing + session tokens, using Web Crypto (available in Workers).
 
-const PBKDF2_ITERATIONS = 100_000
+// OWASP floor (2023) is 600k for PBKDF2-SHA256; 100k was the pre-2021 figure.
+export const PBKDF2_ITERATIONS = 600_000
+// Legacy rows (created before the bump) were hashed with 100k iterations.
+export const LEGACY_PBKDF2_ITERATIONS = 100_000
 const KEY_LEN_BYTES = 32
 
 function bufToHex(buf: ArrayBuffer): string {
@@ -15,21 +18,30 @@ function hexToBuf(hex: string): Uint8Array {
   return out
 }
 
-export async function hashPassword(password: string, saltHex?: string): Promise<{ salt: string; hash: string }> {
+export async function hashPassword(
+  password: string,
+  saltHex?: string,
+  iterations = PBKDF2_ITERATIONS,
+): Promise<{ salt: string; hash: string }> {
   const salt = saltHex ? hexToBuf(saltHex) : crypto.getRandomValues(new Uint8Array(16))
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, [
     'deriveBits',
   ])
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: 'SHA-256' },
     key,
     KEY_LEN_BYTES * 8,
   )
   return { salt: bufToHex(salt.buffer as ArrayBuffer), hash: bufToHex(bits) }
 }
 
-export async function verifyPassword(password: string, saltHex: string, expectedHash: string): Promise<boolean> {
-  const { hash } = await hashPassword(password, saltHex)
+export async function verifyPassword(
+  password: string,
+  saltHex: string,
+  expectedHash: string,
+  iterations: number,
+): Promise<boolean> {
+  const { hash } = await hashPassword(password, saltHex, iterations)
   return hash === expectedHash
 }
 

@@ -83,7 +83,7 @@ export default function Queens() {
   const [over, setOver] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const startTimeRef = useRef(0)
-  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('queens')
+  const { submit, submitting, feedback, resetTimer, undo, undoing } = useScoreSubmit('queens')
 
   const start = () => {
     setBoard(generateBoard())
@@ -195,7 +195,7 @@ export default function Queens() {
         <p className="queens-hint warn">Conflicting queens highlighted — fix them to win.</p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} onUndo={undo} />
+      <ScoreBanner feedback={feedback} onUndo={undo} undoing={undoing} />
     </div>
   )
 }

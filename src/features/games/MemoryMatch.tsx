@@ -33,7 +33,7 @@ export default function MemoryMatch() {
   const [moves, setMoves] = useState(0)
   const [matches, setMatches] = useState(0)
   const [done, setDone] = useState(false)
-  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('memory')
+  const { submit, submitting, feedback, resetTimer, undo, undoing } = useScoreSubmit('memory')
 
   const locked = picks.length >= 2
 
@@ -123,7 +123,7 @@ export default function MemoryMatch() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} onUndo={undo} />
+      <ScoreBanner feedback={feedback} onUndo={undo} undoing={undoing} />
     </div>
   )
 }

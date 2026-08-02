@@ -5,7 +5,7 @@ import { useAuth } from '../store/auth'
 import { PromoBox } from './auth/PromoBox'
 
 export function WalletSheet() {
-  const { user, todayEarned, todayCap, loadPayouts, payouts, applyPromoCode } = useAuth()
+  const { user, todayEarned, todayCap, loadPayouts, payouts, applyPromoCode, applyEarned } = useAuth()
   const [faucet, setFaucet] = useState('')
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
@@ -29,6 +29,7 @@ export function WalletSheet() {
     setMessage(null)
     try {
       const res = await api.redeem(faucet.trim())
+      applyEarned(res.balance, todayEarned)
       setMessage({ kind: 'ok', text: `Payout sent! ${res.payout.trxAmount} TRX on its way to your FaucetPay.` })
       setFaucet('')
       loadPayouts()

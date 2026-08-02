@@ -14,6 +14,7 @@ interface AuthState {
   refresh: () => Promise<void>
   loadPayouts: () => Promise<void>
   applyPromoCode: (code: string) => Promise<number>
+  applyEarned: (balance: number, todayEarned: number) => void
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -57,4 +58,10 @@ export const useAuth = create<AuthState>((set) => ({
     set((state) => ({ user: state.user ? { ...state.user, balance: data.balance } : null }))
     return data.points
   },
+
+  applyEarned: (balance, todayEarned) =>
+    set((state) => ({
+      user: state.user ? { ...state.user, balance } : null,
+      todayEarned,
+    })),
 }))

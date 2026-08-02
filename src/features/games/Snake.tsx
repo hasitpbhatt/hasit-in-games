@@ -42,7 +42,7 @@ export default function Snake() {
     dead: boolean
     ticks: number
   } | null>(null)
-  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('snake')
+  const { submit, submitting, feedback, resetTimer, undo, undoing } = useScoreSubmit('snake')
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current
@@ -125,11 +125,20 @@ export default function Snake() {
     draw()
   }, [draw, submit])
 
+  // Recompute the tick interval on every loop so the speed actually ramps up
+  // as the snake grows. A fixed setInterval would freeze the difficulty.
   useEffect(() => {
     if (!running) return
-    const speed = Math.max(60, BASE_TICK - gameRef.current!.ticks * 2)
-    const id = window.setInterval(tick, speed)
-    return () => window.clearInterval(id)
+    let id: number
+    const loop = () => {
+      tick()
+      const game = gameRef.current
+      if (!game || game.dead) return
+      const speed = Math.max(60, BASE_TICK - game.ticks * 2)
+      id = window.setTimeout(loop, speed)
+    }
+    id = window.setTimeout(loop, BASE_TICK)
+    return () => window.clearTimeout(id)
   }, [running, tick])
 
   const turn = useCallback((dir: Direction) => {
@@ -235,7 +244,7 @@ export default function Snake() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} onUndo={undo} />
+      <ScoreBanner feedback={feedback} onUndo={undo} undoing={undoing} />
     </div>
   )
 }

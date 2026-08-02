@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { api } from './api'
 import type { GameId } from './points'
+import { useAuth } from '../store/auth'
 
 export interface ScoreFeedback {
   kind: 'ok' | 'err'
@@ -14,6 +15,7 @@ const UNDO_WINDOW_MS = 5000
 export function useScoreSubmit(game: GameId) {
   const startRef = useRef(Date.now())
   const [submitting, setSubmitting] = useState(false)
+  const [undoing, setUndoing] = useState(false)
   const [feedback, setFeedback] = useState<ScoreFeedback | null>(null)
   const lastSubmitRef = useRef<{ score: number; playSeconds: number; timestamp: number } | null>(null)
 
@@ -22,14 +24,31 @@ export function useScoreSubmit(game: GameId) {
     setFeedback(null)
   }, [])
 
-  const undo = useCallback(() => {
+  const undo = useCallback(async () => {
     const last = lastSubmitRef.current
     if (!last || Date.now() - last.timestamp > UNDO_WINDOW_MS) return false
-    lastSubmitRef.current = null
-    setFeedback(null)
-    resetTimer()
-    return true
-  }, [resetTimer])
+    if (undoing) return false
+    setUndoing(true)
+    try {
+      const res = await api.undoScore()
+      lastSubmitRef.current = null
+      setFeedback(null)
+      useAuth.getState().applyEarned(res.balance, res.todayEarned)
+      return true
+    } catch (err) {
+      lastSubmitRef.current = null
+      setFeedback({
+        kind: 'err',
+        text:
+          err instanceof Error
+            ? err.message
+            : 'Could not undo the submission — it may already be too late.',
+      })
+      return false
+    } finally {
+      setUndoing(false)
+    }
+  }, [undoing])
 
   const submit = useCallback(
     async (score: number) => {
@@ -40,6 +59,7 @@ export function useScoreSubmit(game: GameId) {
       lastSubmitRef.current = { score, playSeconds, timestamp: Date.now() }
       try {
         const res = await api.submitScore(game, score, playSeconds)
+        useAuth.getState().applyEarned(res.balance, res.todayEarned)
         if (res.points > 0) {
           setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points, undoable: true })
         } else if (res.capped) {
@@ -63,5 +83,5 @@ export function useScoreSubmit(game: GameId) {
     [game, submitting],
   )
 
-  return { submit, submitting, feedback, resetTimer, undo }
+  return { submit, submitting, feedback, resetTimer, undo, undoing }
 }

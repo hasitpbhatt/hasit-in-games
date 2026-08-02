@@ -31,8 +31,8 @@ const GAME_INSTRUCTIONS: Record<GameId, string> = {
   reaction: 'Wait for the screen to change, then tap as fast as you can.',
   snake: 'Guide the snake to eat food and grow longer. Avoid walls and yourself.',
   typing: 'Type the words as fast as you can. More words in 30 seconds = more points.',
-  queens: 'Place 8 queens on the board so no two threaten each other. Fewer moves = more points.',
-  tango: 'Fill the grid with sun and moon. Each row and column must have exactly 3 of each.',
+  queens: 'Place 8 queens on the board so no two threaten each other. Solve faster = more points.',
+  tango: 'Fill the grid with sun and moon. Each row and column must have exactly 3 of each. Solve faster = more points.',
   pinpoint: 'Read 8 clues per round and guess the category. More correct = more points.',
 }
 

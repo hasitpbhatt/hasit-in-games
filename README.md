@@ -116,7 +116,7 @@ npm install
 
 # Terminal 1: build once, then serve static + Functions locally
 npm run build
-npx wrangler d1 execute hasit-in-games --local --file schema.sql
+npx wrangler d1 migrations apply hasit-in-games --local
 npx wrangler pages dev dist
 
 # Terminal 2: Vite dev server (HMR, proxies /api → :8788)
@@ -203,9 +203,9 @@ The server rejects scores with:
 | Tango | `solve_seconds > 0 ? max(15, min(150, 180 - seconds)) : 0` | 150 |
 | Pinpoint | `correct_categories * 30` | 150 |
 
-The formula lives in `functions/_shared/economy.ts` (authoritative) and is
-mirrored client-side in `src/lib/points.ts` for UI feedback. The server value
-always wins.
+The formula lives in `functions/_shared/economy.ts` — the server is the single
+source of truth and always wins. Clients send the raw score; the server
+recomputes the award and returns it.
 
 ---
 
@@ -216,7 +216,7 @@ always wins.
 ```bash
 npx wrangler d1 create hasit-in-games
 # Copy the `database_id` into wrangler.jsonc
-npx wrangler d1 execute hasit-in-games --remote --file schema.sql
+npx wrangler d1 migrations apply hasit-in-games --remote
 ```
 
 ### 2. Set production secrets

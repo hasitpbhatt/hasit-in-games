@@ -15,25 +15,36 @@ export default function WhackAMole() {
   const [score, setScore] = useState(0)
   const [running, setRunning] = useState(false)
   const [finished, setFinished] = useState(false)
-  const { submit, submitting, feedback, resetTimer, undo } = useScoreSubmit('whack')
+  const { submit, submitting, feedback, resetTimer, undo, undoing } = useScoreSubmit('whack')
   const timers = useRef<number[]>([])
   const scoreRef = useRef(0)
+  const finishedRef = useRef(false)
+  const whackedRef = useRef<Set<number>>(new Set())
+
+  const finish = () => {
+    if (finishedRef.current) return
+    finishedRef.current = true
+    setRunning(false)
+    setActiveHoles([])
+    setFinished(true)
+    submit(scoreRef.current)
+  }
 
   useEffect(() => {
     if (!running) return
     const interval = window.setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          window.clearInterval(interval)
-          finish()
-          return 0
-        }
-        return t - 1
-      })
+      setTimeLeft((t) => Math.max(0, t - 1))
     }, 1000)
     return () => window.clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running])
+
+  // finish() is called from a plain effect, NOT inside a setState updater, so
+  // StrictMode's double-invocation can't double-submit.
+  useEffect(() => {
+    if (!running || finished) return
+    if (timeLeft <= 0) finish()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, timeLeft])
 
   useEffect(() => {
     if (!running) return
@@ -68,20 +79,19 @@ export default function WhackAMole() {
     setWhacked([])
     setScore(0)
     scoreRef.current = 0
+    finishedRef.current = false
+    whackedRef.current = new Set()
     setFinished(false)
     setRunning(true)
     resetTimer()
   }
 
-  const finish = () => {
-    setRunning(false)
-    setActiveHoles([])
-    setFinished(true)
-    submit(scoreRef.current)
-  }
-
   const whack = (hole: number) => {
     if (!running) return
+    // Guard against double-tap in the same frame: the mole stays mounted until
+    // the re-render removes it, so a second click would double-count.
+    if (whackedRef.current.has(hole)) return
+    whackedRef.current.add(hole)
     setActiveHoles((prev) => prev.filter((h) => h !== hole))
     setWhacked((prev) => [...prev, hole])
     scoreRef.current += 1
@@ -131,7 +141,7 @@ export default function WhackAMole() {
         </p>
       )}
       {submitting && <p className="status">Submitting…</p>}
-      <ScoreBanner feedback={feedback} onUndo={undo} />
+      <ScoreBanner feedback={feedback} onUndo={undo} undoing={undoing} />
     </div>
   )
 }

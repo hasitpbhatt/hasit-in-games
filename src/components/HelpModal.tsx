@@ -12,8 +12,8 @@ const RULES: Record<string, string> = {
   reaction: 'Wait for the screen to change, then tap as fast as you can. Lower reaction time = more points.',
   snake: 'Guide the snake to eat food and grow longer. Longer snakes score more. Avoid hitting walls or yourself.',
   typing: 'Type the words as fast as you can. More words typed in 30 seconds = more points. Accuracy matters.',
-  queens: 'Place 8 queens on the board so no two queens threaten each other. Fewer moves = more points.',
-  tango: 'Fill the grid with sun and moon symbols. Each row and column must have exactly 3 of each. Markers show equality or difference.',
+  queens: 'Place 8 queens on the board so no two queens threaten each other. Solve faster = more points.',
+  tango: 'Fill the grid with sun and moon symbols. Each row and column must have exactly 3 of each. Markers show equality or difference. Solve faster = more points.',
   pinpoint: 'Read 8 clues per round and guess the category. More correct categories in 60 seconds = more points.',
 }
 
