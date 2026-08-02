@@ -21,13 +21,14 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 CREATE TABLE IF NOT EXISTS score_events (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  game       TEXT NOT NULL,
-  score      INTEGER NOT NULL,
-  points     INTEGER NOT NULL,
-  ip         TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  game         TEXT NOT NULL,
+  score        INTEGER NOT NULL,
+  points       INTEGER NOT NULL,
+  highest_tile INTEGER,
+  ip           TEXT,
+  created_at   TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_score_events_user_date ON score_events(user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_score_events_date ON score_events(created_at);
@@ -99,4 +100,11 @@ CREATE TABLE IF NOT EXISTS ip_daily (
   date          TEXT NOT NULL,
   points_issued INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (ip, date)
+);
+
+CREATE TABLE IF NOT EXISTS user_rewards (
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  reward     TEXT NOT NULL,
+  granted_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (user_id, reward)
 );

@@ -210,8 +210,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const globalAward = await reserveGlobal(db, day, points)
   if (globalAward <= 0) {
     await db
-      .prepare('INSERT INTO score_events (user_id, game, score, points, ip) VALUES (?1, ?2, ?3, 0, ?4)')
-      .bind(user.id, game, score, ip)
+      .prepare('INSERT INTO score_events (user_id, game, score, points, highest_tile, ip) VALUES (?1, ?2, ?3, 0, ?4, ?5)')
+      .bind(user.id, game, score, detail?.highestTile ?? null, ip)
       .run()
     return json({
       points: 0,
@@ -228,8 +228,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   if (userAward <= 0) {
     await db
-      .prepare('INSERT INTO score_events (user_id, game, score, points, ip) VALUES (?1, ?2, ?3, 0, ?4)')
-      .bind(user.id, game, score, ip)
+      .prepare('INSERT INTO score_events (user_id, game, score, points, highest_tile, ip) VALUES (?1, ?2, ?3, 0, ?4, ?5)')
+      .bind(user.id, game, score, detail?.highestTile ?? null, ip)
       .run()
     return json({
       points: 0,
@@ -249,8 +249,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   if (ipAward <= 0) {
     await db
-      .prepare('INSERT INTO score_events (user_id, game, score, points, ip) VALUES (?1, ?2, ?3, 0, ?4)')
-      .bind(user.id, game, score, ip)
+      .prepare('INSERT INTO score_events (user_id, game, score, points, highest_tile, ip) VALUES (?1, ?2, ?3, 0, ?4, ?5)')
+      .bind(user.id, game, score, detail?.highestTile ?? null, ip)
       .run()
     return json({
       points: 0,
@@ -263,8 +263,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   await db.batch([
     db
-      .prepare('INSERT INTO score_events (user_id, game, score, points, ip) VALUES (?1, ?2, ?3, ?4, ?5)')
-      .bind(user.id, game, score, ipAward, ip),
+      .prepare('INSERT INTO score_events (user_id, game, score, points, highest_tile, ip) VALUES (?1, ?2, ?3, ?4, ?5, ?6)')
+      .bind(user.id, game, score, ipAward, detail?.highestTile ?? null, ip),
     db.prepare('UPDATE users SET balance = balance + ?1 WHERE id = ?2').bind(ipAward, user.id),
   ])
 

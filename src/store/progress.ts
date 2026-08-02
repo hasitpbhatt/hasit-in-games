@@ -94,7 +94,7 @@ function derived(p: Persisted) {
 }
 
 export interface NarrativeNotice {
-  kind: 'achievement' | 'title' | 'welcome'
+  kind: 'achievement' | 'title' | 'welcome' | 'soul'
   label: string
   text: string
 }
@@ -119,6 +119,7 @@ interface ProgressState {
   markIntroSeen: () => void
   markBriefed: (game: GameId) => void
   clearNotice: () => void
+  notifySoulBonus: (amount: number) => void
   refresh: () => void
 }
 
@@ -214,6 +215,16 @@ export const useProgress = create<ProgressState>((set, get) => ({
   },
 
   clearNotice: () => set({ notice: null }),
+
+  notifySoulBonus: (amount) => {
+    set({
+      notice: {
+        kind: 'soul',
+        label: 'Soul restored',
+        text: `The Last Cabinet breathes — +${amount.toLocaleString()} pts keeper's bonus added to your safe.`,
+      },
+    })
+  },
 
   refresh: () => {
     const p = load()

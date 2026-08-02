@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuth } from './store/auth'
 import { useProgress } from './store/progress'
 import { GAMES, type GameId } from './lib/points'
@@ -17,6 +17,7 @@ import { SoulMeter } from './components/SoulMeter'
 import { JournalSheet } from './components/JournalSheet'
 import { StoryIntro } from './components/StoryIntro'
 import { UnlockToast } from './components/UnlockToast'
+import { claimSoulBonus } from './lib/soulBonus'
 
 function App() {
   const { user, todayEarned, todayCap, refresh, logout, loading } = useAuth()
@@ -35,6 +36,16 @@ function App() {
   useEffect(() => {
     if (user) refreshProgress()
   }, [user, refreshProgress])
+
+  // Retroactive soul-completion bonus: a keeper who already restored 100% soul
+  // before this reward existed gets it on their next load. The claim is
+  // idempotent server-side; the ref just avoids re-pinging on every render.
+  const soulClaimedRef = useRef(false)
+  useEffect(() => {
+    if (!user || soulPct < 100 || soulClaimedRef.current) return
+    soulClaimedRef.current = true
+    void claimSoulBonus()
+  }, [user, soulPct])
 
   useEffect(() => {
     const onPop = () => setActiveGame(null)

@@ -1,5 +1,5 @@
 import type { GameId } from './points'
-import type { MeResponse, Payout, ScoreDetail, ScoreResult } from './types'
+import type { MeResponse, Payout, ScoreDetail, ScoreResult, SoulCompleteResult } from './types'
 
 export class ApiError extends Error {
   status: number
@@ -59,6 +59,10 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ game }),
     })
+  },
+
+  soulComplete() {
+    return request<SoulCompleteResult>('/api/soul/complete', { method: 'POST' })
   },
 
   undoScore() {

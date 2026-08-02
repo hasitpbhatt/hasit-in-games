@@ -4,6 +4,7 @@ import type { GameId } from './points'
 import type { ScoreDetail } from './types'
 import { useAuth } from '../store/auth'
 import { useProgress } from '../store/progress'
+import { claimSoulBonus } from './soulBonus'
 import { vibrate } from './haptics'
 
 export interface ScoreFeedback {
@@ -97,7 +98,13 @@ export function useScoreSubmit(game: GameId) {
         // (achievements, titles, chambers, streak) — bot/garbage scores earn 0
         // points and never update bests.
         if (res.points > 0 || res.capped) {
+          const before = useProgress.getState().soulPct
           useProgress.getState().recordAccepted(game, score, detail?.highestTile, res.points)
+          // Crossing 100% for the first time triggers the one-time completion
+          // bonus (idempotent server-side, so double-firing is harmless).
+          if (before < 100 && useProgress.getState().soulPct >= 100) {
+            void claimSoulBonus()
+          }
         }
         if (res.points > 0) {
           vibrate(30)

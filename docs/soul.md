@@ -81,6 +81,13 @@ threshold (e.g. 2048 highestTile ≥ 256, queens ≤ 135s).
   10,000-point ledger seal) and **6 titles** (Novice Keeper → Arcade Legend)
   conferred by Croak, shown as a topbar chip.
 - **Ember streak** — consecutive UTC days with an accepted play. Cosmetic only.
+- **Soul-completion bonus** — the first time the soul hits 100% (all 12
+  chambers healed **and** all 15 achievements, incl. the 10,000-point ledger
+  seal), the server credits **5,000 pts** once per account. Verified
+  server-side from the accepted score history (per-game bests + 2048 highest
+  tile + plays + lifetime points) and stored in `user_rewards`, so replays
+  never double-credit. Already-complete keepers get it retroactively on their
+  next load.
 
 ## Surfaces shipped
 

@@ -25,6 +25,7 @@ Key properties:
 | Per-user daily cap | 2,000 points |
 | Min. redemption | 1 PEPE (1,000 points) |
 | Anti-abuse | Min 5s playtime, server-side score validation |
+| Soul-completion bonus | One-time 5,000 pts at 100% arcade soul (all chambers healed + all achievements) |
 | Auth | PBKDF2 (100k iters) + salted passwords, 30-day session tokens |
 
 ---

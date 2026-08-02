@@ -23,6 +23,13 @@ export interface ScoreResult {
   capReason?: 'pot' | 'user' | 'ip'
 }
 
+export interface SoulCompleteResult {
+  awarded: boolean
+  amount: number
+  balance: number
+  todayEarned: number
+}
+
 // Optional per-game achievement data sent with a score submission.
 // Mirrors functions/_shared/economy.ts ScoreDetail.
 export interface ScoreDetail {

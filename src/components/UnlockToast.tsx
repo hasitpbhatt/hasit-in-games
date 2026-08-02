@@ -7,7 +7,7 @@ export function UnlockToast() {
   const [visible, setVisible] = useState(false)
 
   const active: NarrativeNotice | null =
-    notice && (notice.kind === 'achievement' || notice.kind === 'title') ? notice : null
+    notice && (notice.kind === 'achievement' || notice.kind === 'title' || notice.kind === 'soul') ? notice : null
 
   useEffect(() => {
     if (!active) {
