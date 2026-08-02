@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { api } from './api'
 import type { GameId } from './points'
 import { useAuth } from '../store/auth'
+import { vibrate } from './haptics'
 
 export interface ScoreFeedback {
   kind: 'ok' | 'err'
@@ -33,6 +34,7 @@ export function useScoreSubmit(game: GameId) {
     try {
       const res = await api.undoScore()
       lastSubmitRef.current = null
+      vibrate(20)
       setFeedback(null)
       useAuth.getState().applyEarned(res.balance, res.todayEarned)
       return true
@@ -62,14 +64,17 @@ export function useScoreSubmit(game: GameId) {
         const res = await api.submitScore(game, score, playSeconds)
         useAuth.getState().applyEarned(res.balance, res.todayEarned)
         if (res.points > 0) {
+          vibrate(30)
           setFeedback({ kind: 'ok', text: `+${res.points.toLocaleString()} pts earned`, points: res.points, undoable: true })
         } else if (res.capped) {
+          vibrate([40, 40, 40])
           setFeedback({ kind: 'ok', text: 'Daily cap reached — no points this round. Cap resets tomorrow.' })
         } else {
           setFeedback({ kind: 'ok', text: 'Round too short — play at least 5 seconds to earn points.' })
         }
       } catch (err) {
         lastSubmitRef.current = null
+        vibrate([60, 40, 60])
         setFeedback({
           kind: 'err',
           text:

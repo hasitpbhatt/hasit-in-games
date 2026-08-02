@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ScoreBanner } from './ScoreBanner'
 import { GameHud } from '../../components/GameHud'
 import { useScoreSubmit } from '../../lib/useScoreSubmit'
+import { vibrate } from '../../lib/haptics'
 
 const EMOJIS = ['🍒', '🍇', '🍋', '🍉', '⭐', '🌙', '🎯', '⚡']
 const PAIRS = EMOJIS.length
@@ -53,6 +54,7 @@ export default function MemoryMatch() {
       )
       setPicks([])
       if (isMatch) {
+        vibrate([15, 20, 15])
         const newMatches = matches + 1
         setMatches(newMatches)
         if (newMatches === PAIRS) {
@@ -60,6 +62,8 @@ export default function MemoryMatch() {
           const score = Math.max(0, 1200 - (moves - PAIRS) * 50)
           submit(score)
         }
+      } else {
+        vibrate(25)
       }
     }, 450)
     return () => window.clearTimeout(timer)

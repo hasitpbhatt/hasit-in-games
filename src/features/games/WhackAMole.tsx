@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ScoreBanner } from './ScoreBanner'
 import { GameHud } from '../../components/GameHud'
 import { useScoreSubmit } from '../../lib/useScoreSubmit'
+import { vibrate } from '../../lib/haptics'
 
 const ROUND_SECONDS = 30
 const SPAWN_MIN = 650
@@ -96,6 +97,7 @@ export default function WhackAMole() {
     setWhacked((prev) => [...prev, hole])
     scoreRef.current += 1
     setScore(scoreRef.current)
+    vibrate(20)
   }
 
   return (
