@@ -9,7 +9,7 @@ export const PAYOUT_CURRENCY = {
   symbol: 'PEPE', // display abbreviation
   pointsPerUnit: 1_000, // points needed to redeem 1 unit
   minUnits: 1, // minimum redeemable units
-  unitsPerWhole: 1, // FaucetPay amount base unit per whole unit
+  unitsPerWhole: 1e8, // FaucetPay send amount = units × 1e8 (satoshi-style base unit)
 } as const
 
 export const MIN_REDEMPTION_POINTS = PAYOUT_CURRENCY.pointsPerUnit * PAYOUT_CURRENCY.minUnits
