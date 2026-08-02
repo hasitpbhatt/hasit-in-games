@@ -86,9 +86,8 @@ with `checkaddress` before paying out. Amount is in the coin's smallest unit.
 1. 2048
 2. Memory match
 3. Whack-a-mole
-4. Reaction-time
-5. Snake
-6. Typing-speed test
+4. Snake
+5. Typing-speed test
 
 Each game has a bounded score→points formula with a daily cap.
 

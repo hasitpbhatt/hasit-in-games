@@ -14,6 +14,9 @@ export const PAYOUT_CURRENCY = {
 export const MIN_REDEMPTION_POINTS = PAYOUT_CURRENCY.pointsPerUnit * PAYOUT_CURRENCY.minUnits
 export const DAILY_GLOBAL_POINTS = 5_000
 export const DAILY_USER_CAP = 2_000
+// Per-IP daily earning cap — matches the per-user cap. A farm of fresh accounts
+// from one network can't collectively out-earn a single honest player.
+export const DAILY_IP_CAP = 2_000
 export const MIN_PLAY_SECONDS = 5
 
 // Daily withdrawal budget (points) enforced per username OR per IP — whichever
@@ -95,19 +98,6 @@ const TIER_TABLES: Record<string, TierConfig> = {
       [40, 250],
     ],
   },
-  // Reaction Time — lower average (ms) is better.
-  reaction: {
-    mode: 'max',
-    metric: 'score',
-    max: 150,
-    tiers: [
-      [200, 150],
-      [250, 120],
-      [300, 90],
-      [350, 60],
-      [400, 30],
-    ],
-  },
   // Snake — food eaten; longer runs are dramatically harder.
   snake: {
     mode: 'min',
@@ -180,6 +170,51 @@ const TIER_TABLES: Record<string, TierConfig> = {
       [3, 90],
       [4, 120],
       [5, 150],
+    ],
+  },
+  // Word Ladder — valid rungs placed in a 90s round. Bounded count, no luck:
+  // every rung must be a real one-letter step toward a target word.
+  wordladder: {
+    mode: 'min',
+    metric: 'score',
+    max: 150,
+    tiers: [
+      [5, 20],
+      [10, 40],
+      [15, 65],
+      [20, 95],
+      [25, 125],
+      [30, 150],
+    ],
+  },
+  // Anagram — unique words found from a 7-letter rack in a 90s round. Bounded
+  // count: each accepted word must be a real dictionary word inside the rack.
+  anagram: {
+    mode: 'min',
+    metric: 'score',
+    max: 150,
+    tiers: [
+      [10, 30],
+      [15, 60],
+      [20, 90],
+      [25, 120],
+      [30, 150],
+    ],
+  },
+  // Panel (Lights Out) — solve seconds; faster is better. Boards are generated
+  // with a unique 8–11 press solution (the 5×5 Lights Out matrix is
+  // non-singular over GF(2)), so speed is pure deduction, and the [3600, 20]
+  // floor keeps a slow-but-correct solve from being zeroed.
+  panel: {
+    mode: 'max',
+    metric: 'score',
+    max: 200,
+    tiers: [
+      [30, 200],
+      [45, 150],
+      [60, 100],
+      [90, 50],
+      [3600, 20],
     ],
   },
   // Toad Hop — perfect landings in a 60s round (or 3 falls). Bounded count, no

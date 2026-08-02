@@ -9,9 +9,9 @@ interface GameCardProps {
 }
 
 const SCORE_UNIT: Partial<Record<GameId, string>> = {
-  reaction: ' ms',
   queens: ' s',
   tango: ' s',
+  panel: ' s',
   '2048': ' tile',
 }
 

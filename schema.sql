@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS score_events (
   game       TEXT NOT NULL,
   score      INTEGER NOT NULL,
   points     INTEGER NOT NULL,
+  ip         TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_score_events_user_date ON score_events(user_id, created_at);
@@ -82,4 +83,20 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   bucket INTEGER NOT NULL,
   count  INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (key, bucket)
+);
+
+CREATE TABLE IF NOT EXISTS play_sessions (
+  id         TEXT PRIMARY KEY,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  game       TEXT NOT NULL,
+  started_at INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_play_sessions_user ON play_sessions(user_id);
+
+CREATE TABLE IF NOT EXISTS ip_daily (
+  ip            TEXT NOT NULL,
+  date          TEXT NOT NULL,
+  points_issued INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (ip, date)
 );

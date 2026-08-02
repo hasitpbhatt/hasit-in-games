@@ -9,12 +9,14 @@ const GAME_COMPONENTS: Record<GameId, React.LazyExoticComponent<() => React.JSX.
   '2048': lazy(() => import('./Game2048')),
   memory: lazy(() => import('./MemoryMatch')),
   whack: lazy(() => import('./WhackAMole')),
-  reaction: lazy(() => import('./ReactionTime')),
   snake: lazy(() => import('./Snake')),
   typing: lazy(() => import('./TypingSprint')),
   queens: lazy(() => import('./Queens')),
   tango: lazy(() => import('./Tango')),
   pinpoint: lazy(() => import('./Pinpoint')),
+  wordladder: lazy(() => import('./WordLadder')),
+  anagram: lazy(() => import('./Anagram')),
+  panel: lazy(() => import('./Panel')),
   toadhop: lazy(() => import('./ToadHop')),
 }
 

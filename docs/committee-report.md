@@ -16,10 +16,13 @@ The platform is structurally sound and unusually well-behaved for a real-money
 skill product: deterministic server-authoritative scoring, hard financial
 ceilings, honest copy, and a cosmetic-only narrative layer. **Composite score
 ≈ 3.5/5.** It earns praise on integrity and harm-safety but loses points on
-three things: (1) the trust model assumes the client tells the truth about
-`playSeconds` and the score, (2) two games aren't strong skill gates, and (3) an
-endgame that runs out of reasons to play once the pot is drained and soul is at
-100%. (The original soft-lock/payout/fairness bugs were fixed in Phase A.)
+three things: (1) the play-time trust hole (now closed — see the fixed item
+below) and registration friction, (2) one weak skill gate (Reaction) was removed
+from the roster and Pinpoint remains open to memorization (pool now expanded
+19 → 34 categories), and (3) an endgame that runs out of reasons to play once
+the pot is drained and soul is at 100%. (Phase A shipped the soft-lock/payout/
+fairness fixes; Phase B shipped the session nonce + per-IP cap; Phase C added
+three new cabinets.)
 
 | Metric | Score | Committee |
 |---|---|---|
@@ -60,14 +63,24 @@ Toad Hop input handling, bottom-sheet scrolling, Queens tap targets, copy
 errors) was fixed in the Phase A pass.
 
 ### Major
-- **Client-reported playtime is unverifiable.** `playSeconds` is trusted
-  verbatim (`score.ts:121-123`). A script can POST fabricated max-tier scores
-  with `playSeconds: 5` and harvest the 2,000/day cap in ~1 minute per account;
-  with open registration, three accounts drain the whole 5,000/day pot. This
-  poisons the "skill-only" claim the legal posture rests on. (GD-A, GD-C, PSY-A)
-- **Two games aren't really skill games.** Reaction rewards physiology/hardware
-  (flat ceiling); Pinpoint's 19 fixed categories are memorizable in two sessions
-  → reliable 150/pts farm, not a skill gate. (GD-A, GD-C, GD-E)
+- **Client-reported playtime was unverifiable.** `playSeconds` was trusted
+  verbatim (`score.ts`), so a script could POST fabricated max-tier scores with
+  `playSeconds: 5` and harvest the 2,000/day cap in ~1 minute per account; with
+  open registration, three accounts drain the whole 5,000/day pot.
+  **Resolved:** every round now requires a server-issued play-session nonce
+  (`POST /api/session/start`), minted when the round begins; `/api/score`
+  verifies `playSeconds` against the session's wall-clock age (±10s tolerance)
+  and atomically consumes it, so a fabricated play time or replayed round is
+  rejected. A per-IP daily earning cap (2,000/day, `ip_daily`) closes the
+  multi-account vector. Open items: registration friction (CAPTCHA/email) and
+  the FaucetPay double-send reconcile window. (GD-A, GD-C, PSY-A)
+- **Reaction was not a strong skill gate.** It rewards physiology/hardware with
+  a flat ceiling. **Resolved by removal:** the cabinet, tier table, chamber,
+  achievement, and CSS were dropped. (GD-A, GD-C, GD-E)
+- **Pinpoint's 19 fixed categories are memorizable** → reliable 150/pts farm,
+  not a skill gate. **Product decision: retained** — vocabulary games count as
+  skill games. The pool was expanded 19 → 34 categories to blunt memorization;
+  full rotation remains a future option. (GD-A, GD-C, GD-E)
 
 ---
 
@@ -149,12 +162,13 @@ claim (strongest).
 
 ### Recommended first wave (fills committee-flagged gaps, cheap to ship)
 1. **Echo** — sequence memory, mono trust, ~Low effort, genuinely novel.
-2. **Pulse** (or Tempo Tap) — sustained rhythm/combo; the roster has only
-   one-shot Reaction.
-3. **Panel (Lights Out)** — provably fair via GF(2); Low-Med.
+2. **Pulse** (or Tempo Tap) — sustained rhythm/combo; the roster has no
+   rhythm game.
+3. **Panel (Lights Out)** — provably fair via GF(2); Low-Med. **✅ shipped.**
 4. **Loft** — the "server can prove the score" flagship via re-derivation.
 5. **Brickline** — falling-block strategy, the biggest genre gap (Medium).
-6. **Word Hunt** or **Anagram** — rotating word content, Medium.
+6. **Word Hunt** or **Anagram** — rotating word content, Medium. **Anagram +
+   Word Ladder shipped.**
 
 ---
 
@@ -177,16 +191,21 @@ claim (strongest).
    reduced-motion, 12px micro-labels.
 
 ### Phase B — trust model
-- Server-issued play-session nonce (`startedAt` timestamp) required by
-  `/api/score`, so `playSeconds` becomes unspoofable.
-- Per-IP daily earning cap + registration friction (CAPTCHA/email) to close the
-  multi-account bot vector.
-- Reconcile FaucetPay sends before refunding on timeout (kill the double-send
-  window); unique partial index on `payouts(user_id) WHERE status='pending'`.
-- Rotate/expand the Pinpoint pool; re-derive word games via `ScoreDetail`.
+1. ✅ Server-issued play-session nonce (`POST /api/session/start`) required by
+   `/api/score` — `playSeconds` is now verified against the session's wall-clock
+   age (±10s) and sessions are single-use.
+2. ✅ Per-IP daily earning cap (`ip_daily`, 2,000/day) closes the multi-account
+   bot vector; undo refunds it like the other caps.
+3. ⏳ Registration friction (CAPTCHA/email) — not yet.
+4. ⏳ Reconcile FaucetPay sends before refunding on timeout (kill the
+   double-send window); unique partial index on `payouts(user_id) WHERE
+   status='pending'`.
+5. ✅ Pinpoint pool expanded 19 → 34 categories; word games re-derivable via
+   the shared `src/lib/dictionary.ts`.
 
 ### Phase C — new games (pick 4–6 from the catalog)
 Echo → Pulse → Panel → Loft → Brickline → Word Hunt, in that order.
+**Shipped so far: Panel (Lights Out), Word Ladder, Anagram Scramble.**
 
 ### Phase D — engagement
 - 18+ gate + soft session-pacing nudge (~30–45 min).

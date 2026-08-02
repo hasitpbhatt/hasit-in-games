@@ -196,12 +196,14 @@ The server rejects scores with:
 | 2048 | `floor(score / 2)` | 500 |
 | Memory | `floor(score / 4)` | 300 |
 | Whack-a-Mole | `score * 2` | 250 |
-| Reaction Time | `score < 500 ? floor((500 - score) / 3) : 0` | 150 |
 | Snake | `score * 4` | 400 |
 | Typing Sprint | `floor(score / 2)` | 300 |
 | Queens | `solve_seconds > 0 ? max(20, min(200, 200 - seconds * 2)) : 0` | 200 |
 | Tango | `solve_seconds > 0 ? max(15, min(150, 180 - seconds)) : 0` | 150 |
 | Pinpoint | `correct_categories * 30` | 150 |
+| Word Ladder | `rungs_placed` step table | 150 |
+| Anagram | `words_found` step table | 150 |
+| Panel | `solve_seconds` step table (floor 20) | 200 |
 
 The formula lives in `functions/_shared/economy.ts` — the server is the single
 source of truth and always wins. Clients send the raw score; the server

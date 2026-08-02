@@ -30,13 +30,15 @@ export const GAME_IDS = [
   '2048',
   'memory',
   'whack',
-  'reaction',
   'snake',
   'typing',
   'queens',
   'tango',
   'pinpoint',
   'toadhop',
+  'wordladder',
+  'anagram',
+  'panel',
 ] as const
 export type GameId = (typeof GAME_IDS)[number]
 
@@ -73,14 +75,6 @@ export const GAMES: GameDef[] = [
     rules: 'Tap moles as they pop up. More moles whacked in 30 seconds = more points.',
     icon: '🔨',
     maxPointsPerPlay: 250,
-  },
-  {
-    id: 'reaction',
-    name: 'Reaction Time',
-    description: 'Tap as fast as you can.',
-    rules: 'Wait for the screen to change, then tap as fast as you can. Faster average reaction across 5 trials = more points.',
-    icon: '⚡',
-    maxPointsPerPlay: 150,
   },
   {
     id: 'snake',
@@ -129,5 +123,29 @@ export const GAMES: GameDef[] = [
     rules: 'Hold to charge the leap, release inside the glowing band for a perfect landing. Each perfect re-lights a lily pad. Three falls end the round.',
     icon: '🐸',
     maxPointsPerPlay: 250,
+  },
+  {
+    id: 'wordladder',
+    name: 'Word Ladder',
+    description: 'Turn one word into another, one letter at a time.',
+    rules: 'Change exactly one letter per rung to climb from the start word to the target. Every rung must be a real word. More rungs in 90 seconds = more points.',
+    icon: '🪜',
+    maxPointsPerPlay: 150,
+  },
+  {
+    id: 'anagram',
+    name: 'Anagram Scramble',
+    description: 'Rearrange 7 letters into as many words as you can.',
+    rules: 'Type every word you can make from the rack (3+ letters). Each unique word scores — more words in 90 seconds = more points.',
+    icon: '🔀',
+    maxPointsPerPlay: 150,
+  },
+  {
+    id: 'panel',
+    name: 'Panel (Lights Out)',
+    description: 'Tap tiles to flip the whole panel dark.',
+    rules: 'Tapping a tile flips it and its neighbours. Turn every light off to solve. Faster solves = more points.',
+    icon: '💡',
+    maxPointsPerPlay: 200,
   },
 ]

@@ -74,6 +74,13 @@ export function readSessionCookie(req: Request): string | null {
   return null
 }
 
+// Client IP for per-IP daily caps. Cloudflare Pages always sets this header in
+// production; local dev (wrangler) usually doesn't, so callers treat null as
+// "cap not applicable" rather than failing the round.
+export function clientIp(req: Request): string | null {
+  return req.headers.get('cf-connecting-ip')
+}
+
 export function sessionCookie(token: string, maxAge = SESSION_TTL_SECONDS, secure = false): string {
   return `hasit_session=${token}; Path=/; HttpOnly; SameSite=Lax;${secure ? ' Secure;' : ''} Max-Age=${maxAge}`
 }

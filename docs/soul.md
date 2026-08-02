@@ -50,17 +50,19 @@ a tiny arcade one high score at a time.
 - **Gertie Winkle** — the founder's ghost. Whispers the story of each cabinet.
 - **Pixel** — the arcade cat. Not plot-relevant. Naps on warm cabinets.
 
-## The 10 chambers (games as cabinets)
+## The 12 chambers (games as cabinets)
 
 | Ch | Game | Chamber | Accent |
 |----|------|---------|--------|
-| 1 | Reaction Time | The Surge Capacitor | `#fb7185` |
 | 1 | Memory Match | The Trophy Vault | `#f472b6` |
 | 2 | Whack-a-Mole | The Mole Den | `#f59e0b` |
 | 2 | Snake | The Ghost Line | `#22c55e` |
 | 2 | Toad Hop | The Lily Circuit | `#2dd4bf` |
 | 3 | Typing Sprint | The Rescue Beacon | `#60a5fa` |
 | 3 | Pinpoint | The Lost Signposts | `#34d399` |
+| 3 | Word Ladder | The Stepladder Pass | `#38bdf8` |
+| 3 | Anagram Scramble | The Letter Storm | `#facc15` |
+| 4 | Panel (Lights Out) | The Feedback Loop | `#818cf8` |
 | 4 | Queens | The Throne of Founders | `#a78bfa` |
 | 4 | Tango | The Balance Core | `#fb923c` |
 | 5 | 2048 | The Motherboard Forge | `#d946ef` |
@@ -69,13 +71,13 @@ Chapters: **I First Light · II Garden of Moles & Serpents · III The Order's
 Tongue · IV Logic Loom · V The Million-Tile Heart.**
 
 A chamber is **Healed** when the best server-accepted run crosses a skill
-threshold (e.g. 2048 highestTile ≥ 256, reaction avg ≤ 300ms, queens ≤ 135s).
+threshold (e.g. 2048 highestTile ≥ 256, queens ≤ 135s).
 
 ## Progression (local-first)
 
-- **Arcade Soul %** = `70 · (healed/10) + 30 · (achievements/13)`. A meter with
+- **Arcade Soul %** = `70 · (healed/12) + 30 · (achievements/15)`. A meter with
   Croak riding the fill, in the vault header and the Journal.
-- **13 achievements** (per-chamber purifies + first play/first spark + a
+- **15 achievements** (per-chamber purifies + first play/first spark + a
   10,000-point ledger seal) and **6 titles** (Novice Keeper → Arcade Legend)
   conferred by Croak, shown as a topbar chip.
 - **Ember streak** — consecutive UTC days with an accepted play. Cosmetic only.

@@ -31,6 +31,21 @@ const CATEGORIES: Category[] = [
   { name: 'Trees', clues: ['Oak', 'Pine', 'Maple', 'Birch', 'Willow', 'Cedar', 'Redwood', 'Baobab'] },
   { name: 'Birds', clues: ['Eagle', 'Owl', 'Robin', 'Parrot', 'Flamingo', 'Peacock', 'Albatross', 'Kiwi'] },
   { name: 'Instruments', clues: ['Piano', 'Guitar', 'Violin', 'Drums', 'Saxophone', 'Flute', 'Trumpet', 'Harp'] },
+  { name: 'Capital Cities', clues: ['Paris', 'Tokyo', 'Nairobi', 'Ottawa', 'Lima', 'Oslo', 'Cairo', 'Seoul'] },
+  { name: 'Elements', clues: ['Oxygen', 'Gold', 'Helium', 'Uranium', 'Iron', 'Carbon', 'Zinc', 'Mercury'] },
+  { name: 'US States', clues: ['Texas', 'Alaska', 'Hawaii', 'Vermont', 'Nevada', 'Idaho', 'Ohio', 'Maine'] },
+  { name: 'Rivers', clues: ['Nile', 'Amazon', 'Ganges', 'Danube', 'Volga', 'Thames', 'Rhine', 'Mississippi'] },
+  { name: 'Dog Breeds', clues: ['Labrador', 'Beagle', 'Poodle', 'Husky', 'Corgi', 'Dachshund', 'Boxer', 'Collie'] },
+  { name: 'Greek Gods', clues: ['Zeus', 'Athena', 'Apollo', 'Hermes', 'Artemis', 'Ares', 'Hades', 'Poseidon'] },
+  { name: 'Zodiac Signs', clues: ['Aries', 'Taurus', 'Gemini', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Pisces'] },
+  { name: 'Currencies', clues: ['Dollar', 'Euro', 'Yen', 'Pound', 'Rupee', 'Won', 'Real', 'Krone'] },
+  { name: 'Painters', clues: ['Picasso', 'Monet', 'Van Gogh', 'Da Vinci', 'Rembrandt', 'Klimt', 'Dali', 'Renoir'] },
+  { name: 'Planetary Moons', clues: ['Titan', 'Europa', 'Ganymede', 'Io', 'Triton', 'Phobos', 'Deimos', 'Miranda'] },
+  { name: 'Flowers', clues: ['Rose', 'Tulip', 'Daisy', 'Lotus', 'Orchid', 'Lily', 'Sunflower', 'Daffodil'] },
+  { name: 'Greek Letters', clues: ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omega', 'Sigma', 'Theta', 'Pi'] },
+  { name: 'African Countries', clues: ['Kenya', 'Ghana', 'Zambia', 'Niger', 'Mali', 'Chad', 'Benin', 'Rwanda'] },
+  { name: 'Spices', clues: ['Cinnamon', 'Turmeric', 'Paprika', 'Cumin', 'Nutmeg', 'Oregano', 'Clove', 'Coriander'] },
+  { name: 'Mountains', clues: ['Everest', 'Kilimanjaro', 'Fuji', 'Denali', 'Elbrus', 'K2', 'Mont Blanc', 'Aconcagua'] },
 ]
 
 function shuffle<T>(arr: T[]): T[] {

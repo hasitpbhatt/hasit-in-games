@@ -47,10 +47,17 @@ export const api = {
     return request<MeResponse>('/api/me')
   },
 
-  submitScore(game: GameId, score: number, playSeconds: number, detail?: ScoreDetail) {
+  submitScore(game: GameId, score: number, playSeconds: number, detail?: ScoreDetail, sessionId?: string) {
     return request<ScoreResult>('/api/score', {
       method: 'POST',
-      body: JSON.stringify({ game, score, playSeconds, detail }),
+      body: JSON.stringify({ game, score, playSeconds, detail, sessionId }),
+    })
+  },
+
+  startSession(game: GameId) {
+    return request<{ sessionId: string; startedAt: number }>('/api/session/start', {
+      method: 'POST',
+      body: JSON.stringify({ game }),
     })
   },
 

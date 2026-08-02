@@ -61,14 +61,7 @@
   --tile-2048-bg: #22c55e;
   --tile-2048-text: #052e16;
 
-  /* Reaction game */
-  --reaction-waiting-bg: linear-gradient(160deg, #450a0a, #1c0a0a);
-  --reaction-waiting-text: #fca5a5;
-  --reaction-ready-bg: linear-gradient(160deg, #14532d, #0a2416);
-  --reaction-ready-text: #86efac;
-
   /* Chamber accents — one per cabinet (the soul layer palette) */
-  --chamber-reaction: #fb7185;
   --chamber-memory: #f472b6;
   --chamber-whack: #f59e0b;
   --chamber-snake: #22c55e;
@@ -168,12 +161,6 @@
   --tile-1024-text: #422006;
   --tile-2048-bg: #4ade80;
   --tile-2048-text: #052e16;
-
-  /* Reaction game */
-  --reaction-waiting-bg: linear-gradient(160deg, #fee2e2, #fecaca);
-  --reaction-waiting-text: #991b1b;
-  --reaction-ready-bg: linear-gradient(160deg, #dcfce7, #bbf7d0);
-  --reaction-ready-text: #166534;
 
   /* Cabinet status — light theme */
   --status-active: #6b7280;

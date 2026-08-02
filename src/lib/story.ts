@@ -29,30 +29,21 @@ export const CHAPTERS: ReadonlyArray<{ id: number; name: string; story: string }
 
 // Recommended play order: chambers are shown in this order in the vault/Journal.
 export const CHAMBER_ORDER: readonly GameId[] = [
-  'reaction',
   'memory',
   'whack',
   'snake',
   'toadhop',
   'typing',
   'pinpoint',
+  'wordladder',
+  'anagram',
+  'panel',
   'queens',
   'tango',
   '2048',
 ]
 
 export const CHAMBERS: Record<GameId, ChamberDef> = {
-  reaction: {
-    game: 'reaction',
-    chapter: 1,
-    chamber: 'The Surge Capacitor',
-    hook: 'The core flickers as the Nullmoth drains it — be the spark that charges it.',
-    briefing: 'A stubborn fuse. Tap when it flashes green — and only then.',
-    accent: '#fb7185',
-    metric: 'score',
-    direction: 'lower',
-    threshold: 300,
-  },
   memory: {
     game: 'memory',
     chapter: 1,
@@ -118,6 +109,39 @@ export const CHAMBERS: Record<GameId, ChamberDef> = {
     metric: 'score',
     direction: 'higher',
     threshold: 4,
+  },
+  wordladder: {
+    game: 'wordladder',
+    chapter: 3,
+    chamber: 'The Stepladder Pass',
+    hook: 'The signs hang in broken chains — change one letter at a time and climb back to the naming.',
+    briefing: 'A word-chain cabinet. Change one letter per rung; land on the target word to move on.',
+    accent: '#38bdf8',
+    metric: 'score',
+    direction: 'higher',
+    threshold: 20,
+  },
+  anagram: {
+    game: 'anagram',
+    chapter: 3,
+    chamber: 'The Letter Storm',
+    hook: 'The Nullmoth shredded the marquee — spell the scattered letters back into words.',
+    briefing: 'Unscramble the rack. Every word you find restores a letter of the sign.',
+    accent: '#facc15',
+    metric: 'score',
+    direction: 'higher',
+    threshold: 20,
+  },
+  panel: {
+    game: 'panel',
+    chapter: 4,
+    chamber: 'The Feedback Loop',
+    hook: 'The logic circuits hum out of phase — flip the panel dark, one tap at a time.',
+    briefing: 'Tap a tile to flip it and its neighbours. Darken the whole panel to seal the loop.',
+    accent: '#818cf8',
+    metric: 'score',
+    direction: 'lower',
+    threshold: 90,
   },
   queens: {
     game: 'queens',
@@ -216,12 +240,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     test: (s) => s.purified.includes('whack'),
   },
   {
-    id: 'purify_reaction',
-    name: 'Lightning Retort',
-    flavor: 'The Nullmoth blinked first.',
-    test: (s) => s.purified.includes('reaction'),
-  },
-  {
     id: 'purify_snake',
     name: 'Serpent Sovereign',
     flavor: 'Longer than the dark.',
@@ -250,6 +268,24 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     name: 'Category Sphinx',
     flavor: 'You see the shape of things.',
     test: (s) => s.purified.includes('pinpoint'),
+  },
+  {
+    id: 'purify_wordladder',
+    name: 'Stepmaster',
+    flavor: 'You climb in single-letter strides.',
+    test: (s) => s.purified.includes('wordladder'),
+  },
+  {
+    id: 'purify_anagram',
+    name: 'Rackbreaker',
+    flavor: 'The letters confess their words.',
+    test: (s) => s.purified.includes('anagram'),
+  },
+  {
+    id: 'purify_panel',
+    name: 'Linear Overmind',
+    flavor: 'The loop closes at the speed of thought.',
+    test: (s) => s.purified.includes('panel'),
   },
   {
     id: 'purify_toadhop',
@@ -302,7 +338,7 @@ export const TITLES: TitleDef[] = [
   {
     id: 'chronicler',
     name: 'Order Chronicler',
-    desc: 'All ten cabinets purified.',
+    desc: 'All twelve cabinets purified.',
     rank: 4,
     test: (s) => s.purified.length >= CHAMBER_ORDER.length,
   },
