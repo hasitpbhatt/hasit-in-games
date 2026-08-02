@@ -19,7 +19,7 @@ export const MIN_PLAY_SECONDS = 5
 // Daily withdrawal budget (points) enforced per username OR per IP — whichever
 // matches. An abuser can't spread across many accounts from one IP, or many IPs
 // on one account: either dimension reaching this cap blocks the withdrawal.
-export const MAX_WITHDRAW_POINTS_PER_DAY = 2_000
+export const MAX_WITHDRAW_POINTS_PER_DAY = 20_000
 
 // Optional per-game achievement data the client may send alongside the score.
 export interface ScoreDetail {
