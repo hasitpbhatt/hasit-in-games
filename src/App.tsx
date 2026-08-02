@@ -6,7 +6,6 @@ import { CHAMBER_ORDER, titleById } from './lib/story'
 import { useTheme } from './lib/useTheme'
 import { GameView } from './features/games/GameView'
 import { GameCard } from './features/games/GameCard'
-import { LoginForm } from './features/auth/LoginForm'
 import { WalletSheet } from './features/WalletSheet'
 import { BottomSheet } from './components/BottomSheet'
 import { ConfirmModal } from './components/ConfirmModal'
@@ -20,7 +19,7 @@ import { UnlockToast } from './components/UnlockToast'
 import { claimSoulBonus } from './lib/soulBonus'
 
 function App() {
-  const { user, todayEarned, todayCap, refresh, logout, loading } = useAuth()
+  const { user, todayEarned, todayCap, refresh, logout, loading, createGuest } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const { introSeen, titles, soulPct, notice, markIntroSeen, clearNotice, refresh: refreshProgress } = useProgress()
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
@@ -28,6 +27,16 @@ function App() {
   const [helpOpen, setHelpOpen] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
   const [confirmLogout, setConfirmLogout] = useState(false)
+  const [guestError, setGuestError] = useState<string | null>(null)
+
+  const startGuest = async () => {
+    setGuestError(null)
+    try {
+      await createGuest()
+    } catch (err) {
+      setGuestError(err instanceof Error ? err.message : 'Something went wrong')
+    }
+  }
 
   useEffect(() => {
     refresh()
@@ -97,7 +106,7 @@ function App() {
           </button>
           {user && (
             <>
-              <span className="chip chip-user">👤 {user.username}</span>
+              <span className="chip chip-user">👤 Guest</span>
               {topTitle && (
                 <button
                   type="button"
@@ -165,7 +174,24 @@ function App() {
         </main>
       ) : !user ? (
         <main className="welcome">
-          <LoginForm />
+          <div className="auth-wrap">
+            <div className="auth-card" style={{ maxWidth: 420, textAlign: 'center' }}>
+              <h2>Welcome, keeper.</h2>
+              <p className="sub">Skill games. Earn PEPE. Redeem via FaucetPay. No signup needed — just play.</p>
+              {guestError && (
+                <p className="error" role="alert">
+                  {guestError}
+                </p>
+              )}
+              <button type="button" className="btn btn-primary btn-lg btn-block" onClick={startGuest}>
+                Play as Guest
+              </button>
+              <p className="switch" style={{ marginTop: 24, fontSize: 12 }}>
+                Your account is created automatically and saved with this browser. Clearing cookies or switching devices
+                starts a fresh guest — your points and progress here will not follow you.
+              </p>
+            </div>
+          </div>
         </main>
       ) : (
         <main>

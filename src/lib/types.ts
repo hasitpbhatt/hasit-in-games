@@ -4,6 +4,7 @@ export interface User {
   faucetpayUsername: string | null
   balance: number
   createdAt: string
+  lastUsedAt: string | null
 }
 
 export interface MeResponse {
@@ -34,6 +35,13 @@ export interface SoulCompleteResult {
 // Mirrors functions/_shared/economy.ts ScoreDetail.
 export interface ScoreDetail {
   highestTile?: number
+}
+
+export interface PinpointCheckResult {
+  correct: boolean
+  // 'unresolved' means the server couldn't map the revealed clues to a known
+  // category — the client should fall back to its own exact match.
+  reason?: 'unresolved'
 }
 
 export interface Payout {

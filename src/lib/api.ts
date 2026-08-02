@@ -1,5 +1,5 @@
 import type { GameId } from './points'
-import type { MeResponse, Payout, ScoreDetail, ScoreResult, SoulCompleteResult } from './types'
+import type { MeResponse, Payout, PinpointCheckResult, ScoreDetail, ScoreResult, SoulCompleteResult } from './types'
 
 export class ApiError extends Error {
   status: number
@@ -25,18 +25,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  register(username: string, password: string) {
-    return request<MeResponse>('/api/register', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-    })
-  },
-
-  login(username: string, password: string) {
-    return request<MeResponse>('/api/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-    })
+  guest() {
+    return request<MeResponse>('/api/guest', { method: 'POST' })
   },
 
   logout() {
@@ -63,6 +53,13 @@ export const api = {
 
   soulComplete() {
     return request<SoulCompleteResult>('/api/soul/complete', { method: 'POST' })
+  },
+
+  pinpointCheck(guess: string, clues: string[]) {
+    return request<PinpointCheckResult>('/api/pinpoint/check', {
+      method: 'POST',
+      body: JSON.stringify({ guess, clues }),
+    })
   },
 
   undoScore() {

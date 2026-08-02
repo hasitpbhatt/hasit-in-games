@@ -9,6 +9,7 @@ export interface UserRow {
   balance: number
   created_at: string
   kdf_iterations: number
+  last_used_at: string
 }
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30 // 30 days
@@ -42,6 +43,25 @@ export async function getUserByToken(db: D1Database, token: string | null): Prom
 
 export async function deleteSession(db: D1Database, token: string): Promise<void> {
   await db.prepare('DELETE FROM sessions WHERE token = ?1').bind(token).run()
+}
+
+// Bump the last-used timestamp so stale guest accounts can be reaped later.
+export async function touchUser(db: D1Database, userId: number): Promise<void> {
+  await db.prepare('UPDATE users SET last_used_at = datetime(\'now\') WHERE id = ?1').bind(userId).run()
+}
+
+// Reclaim abandoned guest accounts so the table can't grow unbounded. Only
+// guests who haven't been seen in `maxAgeDays` days are eligible — that
+// threshold is deliberately well past the 30-day session TTL, so any
+// row that still has an active session is never caught here. Runs inline
+// on guest creation (a rare path) instead of a scheduled Worker, keeping
+// it free of any cron/Worker resource.
+export async function purgeStaleGuests(db: D1Database, maxAgeDays = 90): Promise<number> {
+  const res = await db
+    .prepare('DELETE FROM users WHERE username LIKE ?1 AND last_used_at < datetime(\'now\', ?2)')
+    .bind('guest_%', `-${maxAgeDays} days`)
+    .run()
+  return res.meta.changes
 }
 
 export async function todayEarned(db: D1Database, userId: number): Promise<number> {

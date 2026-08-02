@@ -8,8 +8,7 @@ interface AuthState {
   todayCap: number
   payouts: Payout[]
   loading: boolean
-  login: (username: string, password: string) => Promise<void>
-  register: (username: string, password: string) => Promise<void>
+  createGuest: () => Promise<void>
   logout: () => Promise<void>
   refresh: () => Promise<void>
   loadPayouts: () => Promise<void>
@@ -24,13 +23,8 @@ export const useAuth = create<AuthState>((set) => ({
   payouts: [],
   loading: true,
 
-  login: async (username, password) => {
-    const data = await api.login(username, password)
-    set({ user: data.user, todayEarned: data.todayEarned, todayCap: data.todayCap, loading: false })
-  },
-
-  register: async (username, password) => {
-    const data = await api.register(username, password)
+  createGuest: async () => {
+    const data = await api.guest()
     set({ user: data.user, todayEarned: data.todayEarned, todayCap: data.todayCap, loading: false })
   },
 

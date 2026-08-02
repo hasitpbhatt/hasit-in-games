@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   faucetpay_username TEXT,
   balance            INTEGER NOT NULL DEFAULT 0,
   created_at         TEXT NOT NULL DEFAULT (datetime('now')),
-  kdf_iterations     INTEGER NOT NULL DEFAULT 600000
+  last_used_at       TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS sessions (

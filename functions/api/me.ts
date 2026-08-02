@@ -1,4 +1,4 @@
-import { getUserByToken, readSessionCookie, todayEarned } from '../_shared/db'
+import { getUserByToken, readSessionCookie, todayEarned, touchUser } from '../_shared/db'
 import { DAILY_USER_CAP } from '../_shared/economy'
 import { error, json, type Env } from '../_shared/http'
 
@@ -9,6 +9,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return error('Not authenticated', 401)
   }
 
+  await touchUser(db, user.id)
   const earned = await todayEarned(db, user.id)
   return json({
     user: {
@@ -17,6 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       faucetpayUsername: user.faucetpay_username,
       balance: user.balance,
       createdAt: user.created_at,
+      lastUsedAt: user.last_used_at,
     },
     todayEarned: earned,
     todayCap: DAILY_USER_CAP,
